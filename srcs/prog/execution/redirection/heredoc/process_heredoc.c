@@ -11,12 +11,14 @@ int process_heredoc(t_minishell *shell, char *delimiter)
     {
         if (g_signal_received == SIGINT)
         {
-            shell->exit_code = 130;
+            // g_signal_received = 0; // Reset signal
+            shell->exit_code = 130; // 128 + SIGINT(2)
         }
         else
             shell->exit_code = 1;
         return (0);
     }
- 
+    //cmd->input_file = content;
+    // fprintf(stderr, "hi\n");
     return (read_fd);
 }

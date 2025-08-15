@@ -8,4 +8,8 @@ void	free_simple_resources(t_minishell *shell)
 		free(shell->input);
 		shell->input = NULL;
 	}
+	if (shell->mini_file)
+	{
+		shell->input = NULL;
+	}
 }

@@ -9,6 +9,6 @@ char    *find_path(t_env *env)
             return (env->value);
         env = env->next;
     }
-    ft_putstr_fd("PATH not found\n", 2);
+    fprintf(stderr, "PATH not found\n");
     return (NULL);
 }

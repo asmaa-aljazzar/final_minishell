@@ -40,7 +40,6 @@ void execute_external_command(t_minishell *shell)
     {
         ft_putstr_fd("minishell: ", STDERR_FILENO);
         ft_putstr_fd(cmd->argv[0], STDERR_FILENO);
-        //hello its hmeltaha, you need to free sth here, :)
         ft_putstr_fd(": command not found\n", STDERR_FILENO);
         shell->exit_code = 127;
         exit(127);

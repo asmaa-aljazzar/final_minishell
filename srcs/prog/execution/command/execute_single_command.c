@@ -157,8 +157,6 @@ static void fork_and_execute_external(t_minishell *ms)
     }
     else
     {
-        signal(SIGQUIT, handlequit);
-        signal(SIGINT, handle_c);
         waitpid(pid, &status, 0);
         if (WIFEXITED(status))
             ms->exit_code = WEXITSTATUS(status);

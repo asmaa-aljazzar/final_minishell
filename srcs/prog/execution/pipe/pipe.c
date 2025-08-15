@@ -3,10 +3,7 @@
 // Close all pipe file descriptors safely
 static void close_all_pipes(int pipes[][2], int pipe_count)
 {
-    int i;
-
-    i = 0;
-    while (i < pipe_count)
+    for (int i = 0; i < pipe_count; i++)
     {
         close(pipes[i][0]);
         close(pipes[i][1]);
@@ -16,14 +13,10 @@ static void close_all_pipes(int pipes[][2], int pipe_count)
 // Kill previously forked children in case of error to avoid zombies
 static void kill_children(pid_t *pids, int count)
 {
-    int i;
-
-    i = 0;
-    while (i < count)
+    for (int i = 0; i < count; i++)
     {
         if (pids[i] > 0)
             kill(pids[i], SIGKILL);
-        i++;
     }
 }
 
@@ -31,11 +24,9 @@ static void kill_children(pid_t *pids, int count)
 static void wait_for_children(t_minishell *ms, pid_t *pids, int cmd_count)
 {
     int status;
-    int i;
     pid_t pid;
 
-    i = 0;
-    while (i < cmd_count)
+    for (int i = 0; i < cmd_count; i++)
     {
         pid = waitpid(pids[i], &status, 0);
         if (pid == pids[cmd_count - 1])
@@ -45,7 +36,6 @@ static void wait_for_children(t_minishell *ms, pid_t *pids, int cmd_count)
             else if (WIFSIGNALED(status))
                 ms->exit_code = 128 + WTERMSIG(status);
         }
-        i++;
     }
 }
 
@@ -93,9 +83,6 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
 // --- Create all pipes for N commands: N-1 pipes ---
 static int create_all_pipes(int pipes[][2], int pipe_count)
 {
-    int i;
-
-    i = 0;
     for (int i = 0; i < pipe_count; i++)
     {
         if (pipe(pipes[i]) < 0)

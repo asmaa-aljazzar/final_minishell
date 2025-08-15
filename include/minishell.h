@@ -739,6 +739,21 @@ void setup_signals_readline(void);
 void setup_signals_heredoc(void);
 void setup_signals_execution(void);
 void sigint_handler(int sig);
+
+//? [ Debug ]
+
+void debug_command(const t_command *cmd);
+void print_re(t_command *cmd);
+
+//#### Print the environment variables array
+void debug_print_envp_array(char **envp);
+
+//#### Print the environment variables linked list
+void debug_print_env_list(t_env *env);
+
+// Print the tokens array
+void debug_print_tokens(t_token **tokens);
+//hala edition
 void handlequit(int sig);
 void handle_c(int sig);
 void setup_sig_exc(int sig, void(*handler)(int));

@@ -11,9 +11,10 @@ int read_until_delimiter(t_minishell *shell, char *delimiter,
         line = readline("> ");
         if (g_signal_received == SIGINT)
         {
+            // fprintf(stderr, "%d\n", (g_signal_received == SIGINT));
             free(line);
             dup2(2, 0);
-            return  -1; 
+            return  -1; // Abort heredoc input
          }
         if (!line)
             return (-1);
@@ -24,8 +25,8 @@ int read_until_delimiter(t_minishell *shell, char *delimiter,
         	line = expanded;
     	}
         if (process_heredoc_readline(fd, line, delimiter) == -1)
-			break;
+			break; // Exit loop if delimiter is reached or EOF
     }
-
+    // g_signal_received = 0;
     return (0);
 }
