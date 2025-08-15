@@ -1,151 +1,103 @@
 #include "minishell.h"
 
-#include "minishell.h"
-
-//*#### Redirect stdin from the last input file in input_files array
-int main_redir_input_from_files(t_command *cmd)
+int	input_redirection(t_command *cmd, t_redirection *redir)
 {
-    int fd;
-    int i;
+	int	fd;
 
-    if (!cmd->input_files)
-        return 0;
-    i = 0;
-    while (cmd->input_files[i])
-        i++;
-    fd = open(cmd->input_files[i - 1], O_RDONLY);
-    if (fd < 0)
-    {
-        ft_putstr_fd("minishell: ", STDERR_FILENO);
-        perror(cmd->input_files[i - 1]);
-        return -1;
-    }
-    if (dup2(fd, STDIN_FILENO) < 0)
-    {
-        perror("dup2");
-        close(fd);
-        return -1;
-    }
-    close(fd);
-    return 0;
+	if (!cmd || !redir)
+		return (0);
+	fd = open (redir->file, O_RDONLY);
+	if (fd < 0)
+	{
+		ft_putstr_fd ("minishell: ", STDERR_FILENO);
+		perror (redir->file);
+		return (-1);
+	}
+	if (dup2(fd, STDIN_FILENO) < 0)
+	{
+		perror ("dup2");
+		close (fd);
+		return (-1);
+	}
+	close (fd);
+	return (0);
 }
 
-//*#### Handle heredoc input redirection
-int main_redir_input_heredoc(t_command *cmd)
+int	main_redir_input(t_command *cmd, t_redirection *redir)
 {
-    if (!setup_heredoc_input(cmd))
-        return -1;
-    return 0;
+	if (!cmd)
+		return (0);
+	if (redir->type == T_HEREDOC)
+		if (setup_heredoc_input (redir) < 0)
+			return (-1);
+	if (redir->type == T_INPUT)
+		if (input_redirection (cmd, redir) < 0)
+			return (-1);
+	return (0);
 }
 
-//*#### Handle input file redirection for INPUT_FILE input_type
-int main_redir_input_file(t_command *cmd)
+int	main_redir_output_open_file(const char *filename, int output_type)
 {
-    if (input_redirection(cmd) != 0)
-        return -1;
-    return 0;
+	int	flags;
+	int	fd;
+
+	flags = O_WRONLY | O_CREAT;
+	if (output_type == T_APPEND)
+		flags |= O_APPEND;
+	else
+		flags |= O_TRUNC;
+	fd = open(filename, flags, 0644);
+	if (fd < 0)
+	{
+		ft_putstr_fd ("minishell: ", STDERR_FILENO);
+		perror (filename);
+		return (-1);
+	}
+	return (fd);
 }
 
-//*#### Controls input redirection logic by calling appropriate handlers
-int main_redir_input(t_command *cmd)
+int	main_redir_output(t_command *cmd, t_redirection *redir)
 {
-    if (!cmd)
-        return 0;
+	int	fd;
 
-    if (cmd->input_files)
-        return main_redir_input_from_files(cmd);
-
-    if (cmd->input_type == INPUT_HEREDOC)
-        return main_redir_input_heredoc(cmd);
-
-    if (cmd->input_type == INPUT_FILE)
-        return main_redir_input_file(cmd);
-
-    return 0;
+	if (!cmd || !redir)
+		return (0);
+	fd = main_redir_output_open_file(redir->file, redir->type);
+	if (fd < 0)
+	{
+		perror (redir->file);
+		return (-1);
+	}
+	if (dup2 (fd, STDOUT_FILENO) < 0)
+	{
+		perror ("dup2");
+		close (fd);
+		return (-1);
+	}
+	close (fd);
+	return (0);
 }
 
-#include "minishell.h"
-
-//*#### Opens a single output file with correct flags (append/truncate)
-// Returns open file descriptor or -1 on error
-int main_redir_output_open_file(const char *filename, int output_type)
+int	main_redirection(t_minishell *ms)
 {
-    int flags = O_WRONLY | O_CREAT;
-    int fd;
+	t_command		*cmd;
+	t_redirection	*redir;
 
-    if (output_type == OUTPUT_APPEND)
-        flags |= O_APPEND;
-    else
-        flags |= O_TRUNC;
-
-    fd = open(filename, flags, 0644);
-    if (fd < 0)
-    {
-        ft_putstr_fd("minishell: ", STDERR_FILENO);
-        perror(filename);
-        return -1;
-    }
-    return fd;
-}
-
-//*#### Redirects stdout to the given file descriptor
-// Returns 0 on success, -1 on failure
-int main_redir_output_redirect_last(int fd)
-{
-    if (dup2(fd, STDOUT_FILENO) < 0)
-    {
-        perror("dup2");
-        close(fd);
-        return -1;
-    }
-    return 0;
-}
-
-//*#### Handles output redirection logic by opening all files
-// and redirecting stdout to the last one
-int main_redir_output(t_command *cmd)
-{
-    int fd;
-    int i;
-    int last_index;
-
-    if (!cmd || !cmd->output_files)
-        return 0;
-    i = 0;
-    while (cmd->output_files[i])
-        i++;
-    last_index = i - 1;
-    for (i = 0; cmd->output_files[i]; i++)
-    {
-        fd = main_redir_output_open_file(cmd->output_files[i], cmd->output_type);
-        if (fd < 0)
-            return -1;
-
-        if (i == last_index)
-        {
-            if (main_redir_output_redirect_last(fd) < 0)
-                return -1;
-        }
-        close(fd);
-    }
-    return 0;
-}
-
-
-//*#### Main function controlling redirection
-// - Calls input and output redirection handlers
-int main_redirection(t_minishell *ms)
-{
-    t_command *cmd = ms->cmd;
-
-    if (!cmd)
-        return 0;
-
-    if (main_redir_input(cmd) < 0)
-        return -1;
-
-    if (main_redir_output(cmd) < 0)
-        return -1;
-
-    return 0;
+	cmd = ms->cmd;
+	redir = cmd->redir;
+	while (redir)
+	{
+		if (redir->type == T_HEREDOC || redir->type == T_INPUT)
+		{
+			if (main_redir_input(cmd, redir) < 0)
+				return (-1);
+		}
+		else if (redir->type == T_OUTPUT || redir->type == T_APPEND)
+		{
+			if (main_redir_output(cmd, redir) < 0)
+				return (-1);
+		}
+		redir = redir->next;
+	}
+	return (0);
 }

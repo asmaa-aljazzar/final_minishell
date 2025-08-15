@@ -1,19 +1,17 @@
 #include "minishell.h"
-int setup_heredoc_input(t_command *cmd)
+int setup_heredoc_input(t_redirection *redir)
 {
     int heredoc_fd;
-    if (cmd->input_type != INPUT_HEREDOC || !cmd->input_file)
-        return (0);
-    heredoc_fd = create_heredoc_pipe(cmd->input_file);
+
+    heredoc_fd = redir->heredoc_fd;
     if (heredoc_fd >= 0)
     {
-        if (dup2(heredoc_fd, STDIN_FILENO) == -1)
+        if (dup2(heredoc_fd, 0) == -1)
         {
             close(heredoc_fd);
-            return (0);
+            return (-1);
         }
         close(heredoc_fd);
-        return (1);
     }
     return (0);
 }

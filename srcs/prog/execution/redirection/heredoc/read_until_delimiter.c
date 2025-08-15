@@ -1,26 +1,31 @@
 #include "minishell.h"
 
-char *read_until_delimiter(char *delimiter)
+int read_until_delimiter(t_minishell *shell, char *delimiter, 
+		int fd, int should_expand)
 {
-    char *content = ft_strdup("");
     char *line;
-    int should_break;
-    setup_signals_heredoc();
+	char *expanded;
+
     while (1)
     {
         line = readline("> ");
         if (g_signal_received == SIGINT)
         {
-            if (line)
-                free(line);
-            free(content);
+            free(line);
             dup2(2, 0);
-            return NULL; // Abort heredoc input
-        }
-        content = process_heredoc_readline(content, line, delimiter, &should_break);
-        if (!content || should_break)
-            break;
+            return  -1; 
+         }
+        if (!line)
+            return (-1);
+		if (should_expand)
+    	{
+        	expanded = expand_heredoc_variables(shell, line);
+        	free(line);
+        	line = expanded;
+    	}
+        if (process_heredoc_readline(fd, line, delimiter) == -1)
+			break;
     }
-    setup_signals_parent();
-    return content;
+
+    return (0);
 }

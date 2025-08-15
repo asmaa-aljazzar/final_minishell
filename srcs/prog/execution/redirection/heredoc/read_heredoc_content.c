@@ -1,18 +1,30 @@
 #include "minishell.h"
 
-char *read_heredoc_content(t_minishell *shell, char *delimiter, int should_expand)
+void yaman(int sig)
 {
-    char *content;
+    (void)sig;
+    g_signal_received = SIGINT;
+    write(1, "\n", 1);
+    rl_replace_line("", 0);
+    rl_on_new_line();
+    close(0);
+}
 
-    content = read_until_delimiter(delimiter);
-    if (!content)
-        return (NULL);
+int read_heredoc_content(t_minishell *shell, char *delimiter, int should_expand)
+{
+    int fd[2];
 
-    if (should_expand && content)
+    if (pipe(fd) == -1)
     {
-        char *expanded = expand_heredoc_variables(shell, content);
-        free(content);
-        content = expanded;
+        perror("pipe");
+        return (-1);
     }
-    return content;
+    struct sigaction sa;
+    sa.sa_handler = yaman;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGINT, &sa, NULL);
+    read_until_delimiter(shell, delimiter, fd[1], should_expand);
+    close(fd[1]); 
+        return (fd[0]);
 }

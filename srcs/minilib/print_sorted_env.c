@@ -60,7 +60,8 @@ void print_sorted_env_print(t_minishell *minishell, char **sorted_names, int cou
     int i;
     t_env *current;
 
-    for (i = 0; i < count; i++)
+    i = 0;
+    while (i < count)
     {
         current = minishell->env;
         while (current)
@@ -80,6 +81,7 @@ void print_sorted_env_print(t_minishell *minishell, char **sorted_names, int cou
             }
             current = current->next;
         }
+        i++;
     }
 }
 

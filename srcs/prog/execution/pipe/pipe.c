@@ -3,7 +3,10 @@
 // Close all pipe file descriptors safely
 static void close_all_pipes(int pipes[][2], int pipe_count)
 {
-    for (int i = 0; i < pipe_count; i++)
+    int i;
+
+    i = 0;
+    while (i < pipe_count)
     {
         close(pipes[i][0]);
         close(pipes[i][1]);
@@ -13,10 +16,14 @@ static void close_all_pipes(int pipes[][2], int pipe_count)
 // Kill previously forked children in case of error to avoid zombies
 static void kill_children(pid_t *pids, int count)
 {
-    for (int i = 0; i < count; i++)
+    int i;
+
+    i = 0;
+    while (i < count)
     {
         if (pids[i] > 0)
             kill(pids[i], SIGKILL);
+        i++;
     }
 }
 
@@ -24,9 +31,11 @@ static void kill_children(pid_t *pids, int count)
 static void wait_for_children(t_minishell *ms, pid_t *pids, int cmd_count)
 {
     int status;
+    int i;
     pid_t pid;
 
-    for (int i = 0; i < cmd_count; i++)
+    i = 0;
+    while (i < cmd_count)
     {
         pid = waitpid(pids[i], &status, 0);
         if (pid == pids[cmd_count - 1])
@@ -36,13 +45,14 @@ static void wait_for_children(t_minishell *ms, pid_t *pids, int cmd_count)
             else if (WIFSIGNALED(status))
                 ms->exit_code = 128 + WTERMSIG(status);
         }
+        i++;
     }
 }
 
 // --- Child process: set up pipes, redirection, execute command ---
 static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, int cmd_count)
 {
-    setup_signals_child();
+        setup_signals_child();
     // Redirect stdin to previous pipe read end if not first command
     if (idx > 0 && dup2(pipes[idx - 1][0], STDIN_FILENO) < 0)
     {
@@ -60,12 +70,12 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
     close_all_pipes(pipes, cmd_count - 1);
 
     ms->cmd = cmd;
+    if (main_redirection(ms) != 0)
+        exit(EXIT_FAILURE);
 
     if (is_command_empty(cmd))
         exit(0);
 
-    if (main_redirection(ms) != 0)
-        exit(EXIT_FAILURE);
 
     if (is_builtin(cmd))
     {
@@ -83,6 +93,9 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
 // --- Create all pipes for N commands: N-1 pipes ---
 static int create_all_pipes(int pipes[][2], int pipe_count)
 {
+    int i;
+
+    i = 0;
     for (int i = 0; i < pipe_count; i++)
     {
         if (pipe(pipes[i]) < 0)

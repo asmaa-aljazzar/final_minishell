@@ -36,16 +36,15 @@ void execute_external_command(t_minishell *shell)
         cmd_path = cmd->argv[0];
     else
         cmd_path = get_path(shell);
-
     if (!cmd_path)
     {
         ft_putstr_fd("minishell: ", STDERR_FILENO);
         ft_putstr_fd(cmd->argv[0], STDERR_FILENO);
+        //hello its hmeltaha, you need to free sth here, :)
         ft_putstr_fd(": command not found\n", STDERR_FILENO);
         shell->exit_code = 127;
         exit(127);
     }
-
     // Check for ending slash with non-directory target
     if (cmd->argv[0][ft_strlen(cmd->argv[0]) - 1] == '/')
     {
@@ -58,7 +57,6 @@ void execute_external_command(t_minishell *shell)
             exit(126);
         }
     }
-
     if (stat(cmd_path, &st) == 0 && S_ISDIR(st.st_mode))
     {
         ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -67,9 +65,7 @@ void execute_external_command(t_minishell *shell)
         shell->exit_code = 126;
         exit(126);
     }
-
     execve(cmd_path, cmd->argv, shell->envp);
-
     ft_putstr_fd("minishell: ", STDERR_FILENO);
     perror(cmd->argv[0]);
 

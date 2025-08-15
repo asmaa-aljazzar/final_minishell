@@ -33,22 +33,24 @@
 
 #include "minishell.h"
 
-#include "minishell.h"
-
 // Returns 1 if command argv is empty or all whitespace
 // This checks all args to be empty strings or whitespace only
 static int is_command_empty_all(t_command *cmd)
 {
+    int i;
+
     if (!cmd || !cmd->argv)
         return 1;
 
-    for (int i = 0; cmd->argv[i]; i++)
+    i = 0;
+    while (cmd->argv[i])
     {
         char *arg = cmd->argv[i];
         while (*arg && (*arg == ' ' || *arg == '\t' || *arg == '\n'))
             arg++;
         if (*arg != '\0')
-            return 0; // found non-empty arg
+            return 0;
+        i++;
     }
     return 1;
 }
