@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_commands.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 14:20:40 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 14:20:40 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -10,10 +21,10 @@ void	print_re(t_redirection *re)
 	}
 }
 
-void free_redirections(t_redirection *redir)
+void	free_redirections(t_redirection *redir)
 {
-	t_redirection *current;
-	t_redirection *next;
+	t_redirection	*current;
+	t_redirection	*next;
 
 	current = redir;
 	while (current)

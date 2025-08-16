@@ -1,7 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_shell.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 14:15:14 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 14:15:14 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-static void initialize_fields(t_minishell *ms)
+static void	initialize_fields(t_minishell *ms)
 {
 	ms->tok = NULL;
 	ms->tokens_count = 0;
@@ -10,7 +21,7 @@ static void initialize_fields(t_minishell *ms)
 	ms->pipes = NULL;
 }
 
-static int read_input_and_process(t_minishell *ms)
+static int	read_input_and_process(t_minishell *ms)
 {
 	int	i;
 
@@ -30,7 +41,7 @@ static int read_input_and_process(t_minishell *ms)
 	while (ms->input[i])
 	{
 		if (!is_whitespace(ms->input[i]))
-			break;
+			break ;
 		i++;
 	}
 	add_history(ms->input);
@@ -42,30 +53,30 @@ static int read_input_and_process(t_minishell *ms)
 	return (1);
 }
 
-static int read_and_prepare_input(t_minishell *ms)
+static int	read_and_prepare_input(t_minishell *ms)
 {
 	initialize_fields(ms);
 	return (read_input_and_process(ms));
 }
 
-static int process_input_and_validate(t_minishell *ms)
+static int	process_input_and_validate(t_minishell *ms)
 {
 	if (!get_tokens(ms))
 	{
 		free(ms->input);
 		ms->input = NULL;
-		return 0;
+		return (0);
 	}
 	if (!validate_syntax(ms))
 	{
 		check_to_free(ms);
 		ms->exit_code = 2;
-		return 0;
+		return (0);
 	}
-	return 1;
+	return (1);
 }
 
-int init_shell(t_minishell *ms)
+int	init_shell(t_minishell *ms)
 {
 	check_to_free(ms);
 	if (!read_and_prepare_input(ms))

@@ -1,23 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tokens_to_commands.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 14:03:01 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 14:03:01 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
-// void	if_input_files_heredoc(t_minishell *minishell, t_token *token,
-// 		t_command **cmd, int *i)
-// {
-// 	char	*file;
 
-// 	if (token->type == INPUT_FILE || token->type == INPUT_HEREDOC)
-// 	{
-// 		if (minishell->tok[(*i) + 1])
-// 		{
-// 			file = minishell->tok[++(*i)]->word;
-// 			(*cmd)->input_files = add_to_list((*cmd)->input_files, file);
-// 		}
-// 	}
-// }
-
-t_redirection *create_redir(char *file, int type)
+t_redirection	*create_redir(char *file, int type)
 {
-	t_redirection *new_redir;
+	t_redirection	*new_redir;
 
 	new_redir = malloc(sizeof(t_redirection));
 	if (!new_redir)
@@ -30,10 +27,11 @@ t_redirection *create_redir(char *file, int type)
 	return (new_redir);
 }
 
-int add_redirection(t_minishell *minishell, t_redirection **root, t_token *token, char *file)
+int	add_redirection(t_minishell *minishell, t_redirection **root,
+		t_token *token, char *file)
 {
-	t_redirection *new_redir;
-	t_redirection *current;
+	t_redirection	*new_redir;
+	t_redirection	*current;
 
 	new_redir = create_redir(file, token->type);
 	if (!new_redir)
@@ -55,18 +53,16 @@ int add_redirection(t_minishell *minishell, t_redirection **root, t_token *token
 	return (1);
 }
 
-int is_redirect(t_token *token)
+int	is_redirect(t_token *token)
 {
-	if (token->type == T_INPUT 
-		|| token->type == T_HEREDOC 
-		|| token->type == T_OUTPUT 
-		|| token->type == T_APPEND)
+	if (token->type == T_INPUT || token->type == T_HEREDOC
+		|| token->type == T_OUTPUT || token->type == T_APPEND)
 		return (1);
 	return (0);
 }
 
-int fill_redirections(t_minishell *minishell, t_token *token,
-		t_command **cmd, int *i)
+int	fill_redirections(t_minishell *minishell, t_token *token, t_command **cmd,
+		int *i)
 {
 	char	*file;
 
@@ -80,7 +76,6 @@ int fill_redirections(t_minishell *minishell, t_token *token,
 	}
 	return (0);
 }
-
 
 void	tokens_to_commands(t_minishell *minishell)
 {

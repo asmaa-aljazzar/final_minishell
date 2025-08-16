@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   create_new_token.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 14:08:14 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 14:08:14 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 t_token	*create_new_token(t_minishell *ms, const char *word, int did_expand)

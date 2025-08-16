@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free_complex_resources.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 14:20:47 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 14:20:47 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -31,15 +42,15 @@ void	free_complex_resources(t_minishell *shell)
 	if (shell->input)
 	{
 		free(shell->input);
-		shell->input = NULL;	
+		shell->input = NULL;
 	}
 	if (shell->pids)
-		free (shell->pids);
+		free(shell->pids);
 	if (shell->pipes)
-		free (shell->pipes);
+		free(shell->pipes);
 }
 
-void free_simple_resources(t_minishell *shell)
+void	free_simple_resources(t_minishell *shell)
 {
 	if (shell->cmd)
 	{
@@ -54,7 +65,7 @@ void free_simple_resources(t_minishell *shell)
 	if (shell->input)
 	{
 		free(shell->input);
-		shell->input = NULL;	
+		shell->input = NULL;
 	}
 	if (shell->pids)
 	{

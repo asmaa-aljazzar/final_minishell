@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 14:15:26 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 14:15:26 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
@@ -7,7 +18,7 @@ void	init(t_minishell *ms, char **environ, char *argv)
 	ms->input = NULL;
 	ms->cmd = NULL;
 	ms->tokens_count = 0;
-	ms->pipe_count = 0;                  
+	ms->pipe_count = 0;
 	ms->exit_code = 0;
 	ms->skip_execution = 0;
 	ms->pids = NULL;
@@ -28,8 +39,8 @@ void	init(t_minishell *ms, char **environ, char *argv)
 		free_2d(ms->envp);
 		exit(1);
 	}
-	ms->in_single_quote = 0;                
-	ms->in_double_quote = 0;          
+	ms->in_single_quote = 0;
+	ms->in_double_quote = 0;
 	ft_memset(ms->buff, 0, sizeof(ms->buff));
 	if (!increase_shlvl_var(ms, ms->env))
 	{
