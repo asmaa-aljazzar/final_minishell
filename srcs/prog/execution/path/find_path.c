@@ -3,7 +3,7 @@
 
 char    *find_path(t_env *env)
 {
-     while(env)    // find PATH in envp
+    while(env)
     {
         if (strncmp(env->name, "PATH", 4) == 0)
             return (env->value);

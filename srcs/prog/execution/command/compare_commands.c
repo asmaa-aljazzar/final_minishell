@@ -24,7 +24,5 @@ void compare_commands(t_minishell *shell)
     else if (ft_strcmp(cmd->argv[0], "exit") == 0)
         exit_builtin(shell);
     else
-    {
         execute_external_command(shell);
-    }
 }

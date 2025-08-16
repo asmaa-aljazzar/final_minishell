@@ -10,6 +10,8 @@ void	init(t_minishell *ms, char **environ, char *argv)
 	ms->pipe_count = 0;                  
 	ms->exit_code = 0;
 	ms->skip_execution = 0;
+	ms->pids = NULL;
+	ms->pipes = NULL;
 	ms->mini_file = ft_strdup(argv);
 	if (!ms->mini_file)
 		exit(1);

@@ -19,5 +19,6 @@ int process_token_to_fill(t_minishell *ms, t_command **cmd, t_token *tok, int *a
         (*arg_idx)++;
 		return (0);
     }
+
 	return (3);
 }

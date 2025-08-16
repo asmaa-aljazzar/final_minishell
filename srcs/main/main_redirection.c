@@ -11,16 +11,16 @@ int input_redirection(t_command *cmd, t_redirection *redir)
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		perror(redir->file);
-		return -1;
+		return (-1);
 	}
 	if (dup2(fd, STDIN_FILENO) < 0)
 	{
 		perror("dup2");
 		close(fd);
-		return -1;
+		return (-1);
     }
     close(fd);
-    return 0;
+    return (0);
 }
 
 int main_redir_input(t_command *cmd, t_redirection *redir)
@@ -32,8 +32,8 @@ int main_redir_input(t_command *cmd, t_redirection *redir)
             return (-1);
     if (redir->type == T_INPUT)
         if (input_redirection(cmd, redir) < 0)
-            return -1;
-    return 0;
+            return (-1);
+    return (0);
 }
 
 int main_redir_output_open_file(const char *filename, int output_type)
@@ -89,12 +89,12 @@ int main_redirection(t_minishell *ms)
         if (redir->type == T_HEREDOC || redir->type == T_INPUT)
         {
             if (main_redir_input(cmd, redir) < 0)
-                return -1;
+                return (-1);
         }
         else if (redir->type == T_OUTPUT || redir->type == T_APPEND)
         {
             if (main_redir_output(cmd, redir) < 0)
-                return -1;
+                return (-1);
         }
         redir = redir->next;
     }

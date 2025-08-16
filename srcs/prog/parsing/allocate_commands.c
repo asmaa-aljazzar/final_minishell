@@ -11,7 +11,7 @@ t_command *create_command_list(t_minishell *ms, int count)
     head = NULL;
     curr = NULL;
     i = 0;
-    while (i <= count)
+    while (i < count + 1)
     {
         new = init_command(ms);
         if (!head)
@@ -28,8 +28,3 @@ t_command *create_command_list(t_minishell *ms, int count)
     }
     return head;
 }
-
-// void allocate_commands(t_minishell *ms) this function adds extra step only
-// {
-//     ms->cmd = create_command_list(ms, ms->pipe_count); 
-// }

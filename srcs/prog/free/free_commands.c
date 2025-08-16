@@ -31,7 +31,7 @@ void	free_commands(t_minishell *minishell)
 		if (current->argv_expanded)
 			free(current->argv_expanded);
 		if (current->redir)
-			free(current->redir);
+			free_redirections(current->redir);
 		free(current);
 		current = next;
 	}

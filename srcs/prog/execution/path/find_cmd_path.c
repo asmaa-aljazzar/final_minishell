@@ -13,7 +13,7 @@ char    *find_cmd_path( char *cmd,char *path_env)
         if (!full_path)
                 return NULL;
         if (is_executable(full_path))
-            return full_path; // found it
+            return (full_path);
         free(full_path);
         token = strtok(NULL, ":");
     }

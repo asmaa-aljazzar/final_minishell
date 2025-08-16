@@ -115,7 +115,7 @@ static int save_and_apply_redirection(t_minishell *ms, int *saved_stdout)
 
 static void execute_builtin_and_restore(t_minishell *ms, int saved_stdout)
 {
-    compare_commands(ms); 
+    compare_commands(ms);
     if (saved_stdout >= 0)
     {
         if (dup2(saved_stdout, STDOUT_FILENO) == -1)
@@ -136,6 +136,7 @@ static int handle_builtin_with_redirection(t_minishell *ms)
     execute_builtin_and_restore(ms, saved_stdout);
     return (0);
 }
+
 
 static void fork_and_execute_external(t_minishell *ms)
 {

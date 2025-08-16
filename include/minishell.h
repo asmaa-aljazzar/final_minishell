@@ -116,6 +116,8 @@ typedef struct s_minishell
     int in_double_quote;
     int last_token_end;
     char *mini_file;
+    int (*pipes)[2];
+    pid_t *pids;
 } t_minishell;
 
 t_command	*create_command_list(t_minishell *ms, int count);
@@ -133,7 +135,7 @@ void		merge_words(t_minishell *minishell);
 void		advance_and_merge(t_minishell *minishell, t_token **orig, int *i, int k);
 void		merge_two_tokens(t_minishell *minishell, t_token *dst, t_token *src);
 t_token *create_new_token(t_minishell *ms, const char *word, int did_expand);
-
+void    setup_signal(int sig);
 /**
  * @brief #### Tokenize input string into tokens array
  * @brief - Allocate token array based on input length

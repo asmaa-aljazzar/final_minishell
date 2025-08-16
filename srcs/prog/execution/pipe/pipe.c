@@ -61,7 +61,6 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
     ms->cmd = cmd;
     if (main_redirection(ms) != 0)
         ft_exit(ms, "main_redirection failed", 1);
-
     if (is_command_empty(cmd))
         ft_exit(ms, "Command is empty", 0);
     if (is_builtin(cmd))
@@ -80,7 +79,10 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
 // --- Create all pipes for N commands: N-1 pipes ---
 static int create_all_pipes(int pipes[][2], int pipe_count)
 {
-    for (int i = 0; i < pipe_count; i++)
+    int i;
+
+    i = 0;
+    while (i < pipe_count)
     {
         if (pipe(pipes[i]) < 0)
         {
@@ -88,6 +90,7 @@ static int create_all_pipes(int pipes[][2], int pipe_count)
             close_all_pipes(pipes, i);
             return -1;
         }
+        i++;
     }
     return 0;
 }
@@ -101,11 +104,11 @@ static int fork_children(t_minishell *ms, int pipes[][2], pid_t *pids, int cmd_c
     {
         pids[i] = fork();
         if (pids[i] < 0)
-            return i; // Return how many forks succeeded before failure
+            return (i);
         if (pids[i] == 0)
             run_child(ms, cmd, pipes, i, cmd_count);
     }
-    return cmd_count;
+    return (cmd_count);
 }
 
 // --- Parent closes pipes and waits for children ---
@@ -115,6 +118,7 @@ static void handle_parent_process(t_minishell *ms, int pipes[][2], pid_t *pids, 
     signal(SIGINT, handle_c);
     close_all_pipes(pipes, cmd_count - 1);
     wait_for_children(ms, pids, cmd_count);
+    free_simple_resources(ms);
     setup_signals_parent();
 }
 
@@ -170,14 +174,10 @@ void execute_piped_commands(t_minishell *ms, int cmd_count)
 {
     if (cmd_count < 2)
         return;
-    int (*pipes)[2] = NULL;
-    pid_t *pids = NULL;
-    if (setup_and_fork(ms, cmd_count, &pipes, &pids) < 0)
+    if (setup_and_fork(ms, cmd_count, &ms->pipes, &ms->pids) < 0)
     {
         ms->exit_code = EXIT_FAILURE;
         ft_exit(ms, "Failed to set up pipes or fork children", EXIT_FAILURE);
     }
-    handle_parent_process(ms, pipes, pids, cmd_count);
-    free(pipes);
-    free(pids);
+    handle_parent_process(ms, ms->pipes, ms->pids, cmd_count);
 }

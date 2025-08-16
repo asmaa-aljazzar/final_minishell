@@ -33,8 +33,11 @@ void	free_complex_resources(t_minishell *shell)
 		free(shell->input);
 		shell->input = NULL;	
 	}
+	if (shell->pids)
+		free (shell->pids);
+	if (shell->pipes)
+		free (shell->pipes);
 }
-
 
 void free_simple_resources(t_minishell *shell)
 {
@@ -52,5 +55,15 @@ void free_simple_resources(t_minishell *shell)
 	{
 		free(shell->input);
 		shell->input = NULL;	
+	}
+	if (shell->pids)
+	{
+		free(shell->pids);
+		shell->pids = NULL;
+	}
+	if (shell->pipes)
+	{
+		free(shell->pipes);
+		shell->pipes = NULL;
 	}
 }
