@@ -1,149 +1,167 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 12:44:38 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 12:44:38 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
 //* ----------- [ Includes ] -----------
-# include <signal.h>
-# include <asm-generic/signal-defs.h> //! may delete // my system don't recognize sa
 # include "../libft/includes/libft.h"
-# include <sys/wait.h>
-# include <readline/readline.h>
-# include <readline/history.h>
+# include <asm-generic/signal-defs.h> //! may delete
+	// my system don't recognize sa
 # include <errno.h>
 # include <fcntl.h>
+# include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
 # include <sys/stat.h>
 # include <sys/types.h>
+# include <sys/wait.h>
 
 //* ----------- [ Macros ] -----------
 # define PROMPT "\033[33mminishell\033[32m$ \033[0m"
 # define SIG_NONE 0
-# define SIG_INT 130   // Ctrl+C (128 + 2)
-# define SIG_QUIT 131  // Ctrl+\ (128 + 3)
+# define SIG_INT 130  // Ctrl+C (128 + 2)
+# define SIG_QUIT 131 // Ctrl+\ (128 + 3)
 
 //* ----------- [ Global ] -----------
-extern volatile sig_atomic_t g_signal_received;
+extern volatile sig_atomic_t	g_signal_received;
 
 //* ----------- [ enums ] -----------
 
 // use to detect what kind of word in the tokens array
 typedef enum e_quote
 {
-    QUOTE_NONE, // not qouted
-    QUOTE_SINGLE, // 'some'
-    QUOTE_DOUBLE, // "some"
-} t_quote;
+	QUOTE_NONE,// not qouted
+	QUOTE_SINGLE,// 'some'
+	QUOTE_DOUBLE,// "some"
+}								t_quote;
 
 typedef enum e_type
 {
 	T_WORD,
 	T_FILE,
-	T_INPUT, 
+	T_INPUT,
 	T_HEREDOC,
 	T_OUTPUT,
 	T_APPEND,
 	PIPE
-} t_type;
+}								t_type;
 
 typedef struct s_fd_backup
 {
-    int stdin_backup;
-    int stdout_backup;
-    int stderr_backup;
-} t_fd_backup;
+	int							stdin_backup;
+	int							stdout_backup;
+	int							stderr_backup;
+}								t_fd_backup;
 
 //* ----------- [ Structures ] -----------
 //
 typedef struct s_env
 {
-    char *name;
-    char *value;
-    struct s_env *next;
-} t_env;
+	char						*name;
+	char						*value;
+	struct s_env				*next;
+}								t_env;
 
 //? This is the array of tokens: we can create a custome arrays
 typedef struct s_token
 {
-    char *word;    /* already without the surrounding quotes   */
-    t_type type;   /* WORD | PIPE | REDIR_*                    */
-    t_quote qtype; /* how it 'was' quoted  */
-    int expanded; // 1 if expanded or 0
-    // int is_environ
-    int glued;     /* 1 → directly attached to previous char 0 → at least one white-space before it   */
-} t_token;
-
-typedef struct s_cd_path
-{
-    char *path;
-    char *display_path;
-    char *expanded_path;
-}   t_cd_path;
-
-typedef struct s_token_out
-{
-    t_token **new_tokens;
-    int *new_count;
-} t_token_out;
-
-typedef struct	s_redirection
-{
-	t_type	type;
-	char	*file;
-	int		heredoc_fd;
-    struct s_redirection *next;
-    struct s_redirection *prev;
-}				t_redirection;
-
-typedef struct s_command
-{
-    char **argv;       // ["cat"]
-    int  *argv_expanded;
-    struct s_command *next; // Next command in pipe sequence
-	t_redirection	*redir;
-} t_command;
-
-typedef struct s_minishell
-{
-    char *input; // redline input string
-    t_command *cmd; // commands linked list
-    int tokens_count; // number of tokens
-    t_token **tok; // tokens array
-    int pipe_count; // how many [pipe/ commands] we have
-    char buff[1024];
-    t_env *env; // env vars linded list
-    char **envp; // ["NAME=VAl"][...][...]
-    int exit_code;
-    int skip_execution; // if no need to execute [error, not mandatory].
-    int in_single_quote;
-    int in_double_quote;
-    int last_token_end;
-    char *mini_file;
-    int (*pipes)[2];
-    pid_t *pids;
-} t_minishell;
+	char	*word;/* already without the surrounding quotes   */
+	t_type	type;/* WORD | PIPE | REDIR_*                    */
+	t_quote	qtype;/* how it 'was' quoted  */
+	int		expanded;// 1 if expanded or 0
+	int		glued;
+		/* 1 → directly attached to 
+		previous char 0 → at least one white-space before it   */
+}								t_token;
 
 typedef struct s_int_var
 {
 	int	word_count;
 	int	word_idx;
 	int	i;
-}	t_int_var;
 
+}		t_int_var;
 
-t_command	*create_command_list(t_minishell *ms, int count);
-t_command	*init_command(t_minishell *ms);
+typedef struct s_cd_path
+{
+	char						*path;
+	char						*display_path;
+	char						*expanded_path;
+}								t_cd_path;
+
+typedef struct s_token_out
+{
+	t_token						**new_tokens;
+	int							*new_count;
+}								t_token_out;
+
+typedef struct s_redirection
+{
+	t_type						type;
+	char						*file;
+	int							heredoc_fd;
+	struct s_redirection		*next;
+	struct s_redirection		*prev;
+}								t_redirection;
+
+typedef struct s_command
+{
+	char				**argv;// ["cat"]
+	int					*argv_expanded;
+	struct s_command	*next;// Next command in pipe sequence
+	t_redirection		*redir;
+}								t_command;
+
+typedef struct s_minishell
+{
+	char		*input;// redline input string
+	t_command	*cmd;// commands linked list
+	int			tokens_count;// number of tokens
+	t_token		**tok;// tokens array
+	int			pipe_count;// how many [pipe/ commands] we have
+	char		buff[1024];
+	t_env		*env;// env vars linded list
+	char		**envp;// ["NAME=VAl"][...][...]
+	int			exit_code;
+	int			skip_execution;// if no need to execute [error, not mandatory].
+	int			in_single_quote;
+	int			in_double_quote;
+	int			last_token_end;
+	char		*mini_file;
+	int			(*pipes)[2];
+	pid_t		*pids;
+}								t_minishell;
+
+t_command						*create_command_list(t_minishell *ms,
+									int count);
+t_command						*init_command(t_minishell *ms);
 //* ----------- [ Functions ] -----------
 
-//? [ Main ] 
+//? [ Main ]
 
-void		main_loop (t_minishell *ms);
-int			main_redirection(t_minishell *ms);
+void							main_loop(t_minishell *ms);
+int								main_redirection(t_minishell *ms);
 
 //? [ Lexer & Tokenizer ]
 
-void		merge_words(t_minishell *minishell);
-void		advance_and_merge(t_minishell *minishell, t_token **orig, int *i, int k);
-void		merge_two_tokens(t_minishell *minishell, t_token *dst, t_token *src);
-t_token *create_new_token(t_minishell *ms, const char *word, int did_expand);
-void    setup_signal(int sig);
+void							merge_words(t_minishell *minishell);
+void							advance_and_merge(t_minishell *minishell,
+									t_token **orig, int *i, int k);
+void							merge_two_tokens(t_minishell *minishell,
+									t_token *dst, t_token *src);
+t_token							*create_new_token(t_minishell *ms,
+									const char *word, int did_expand);
+
 /**
  * @brief #### Tokenize input string into tokens array
  * @brief - Allocate token array based on input length
@@ -152,10 +170,11 @@ void    setup_signal(int sig);
  * @brief - Return 0 on syntax error, 1 on success
  * @param ms  Minishell context
  * @return    1 if tokenization succeeded, 0 on failure
-*/
-int			get_tokens(t_minishell *minishell);
+ */
+int								get_tokens(t_minishell *minishell);
 
-int			process_token(t_minishell *minishell, int *k, int *i);
+int								process_token(t_minishell *minishell, int *k,
+									int *i);
 
 /**
  * @brief #### Select and invoke tokenizer based on current char and quote state
@@ -169,8 +188,9 @@ int			process_token(t_minishell *minishell, int *k, int *i);
  * @param i      Pointer to input index
  * @param glued  Glue status flag
  * @return       1 on success, 0 on failure
-*/
-int			select_tokenizer(t_minishell *ms, int *k, int *i, int glued);
+ */
+int								select_tokenizer(t_minishell *ms, int *k,
+									int *i, int glued);
 
 /**
  * @brief #### Tokenize pipe '|' operator
@@ -183,7 +203,8 @@ int			select_tokenizer(t_minishell *ms, int *k, int *i, int glued);
  * @param i          Pointer to input index
  * @return           None
  */
-void		tokenize_pipe_op(t_minishell *minishell, int *k, int *i);
+void							tokenize_pipe_op(t_minishell *minishell, int *k,
+									int *i);
 
 /**
  * @brief #### Tokenize input redirection operator
@@ -194,7 +215,8 @@ void		tokenize_pipe_op(t_minishell *minishell, int *k, int *i);
  * @param i          Pointer to input index
  * @return           None
  */
-void		tokenize_input_redir(t_minishell *minishell, int *k, int *i);
+void							tokenize_input_redir(t_minishell *minishell,
+									int *k, int *i);
 
 /**
  * @brief #### Handle heredoc input redirection '<<'
@@ -206,7 +228,8 @@ void		tokenize_input_redir(t_minishell *minishell, int *k, int *i);
  * @param i          Pointer to input index
  * @return           None
  */
-void		handle_heredoc_redir(t_minishell *minishell, int *k, int *i);
+void							handle_heredoc_redir(t_minishell *minishell,
+									int *k, int *i);
 
 /**
  * @brief #### Handle single input redirection '<'
@@ -218,7 +241,8 @@ void		handle_heredoc_redir(t_minishell *minishell, int *k, int *i);
  * @param i          Pointer to input index
  * @return           None
  */
-void		handle_input_file_redir(t_minishell *minishell, int *k, int *i);
+void							handle_input_file_redir(t_minishell *minishell,
+									int *k, int *i);
 
 /**
  * @brief #### Tokenize input redirection operator
@@ -229,7 +253,8 @@ void		handle_input_file_redir(t_minishell *minishell, int *k, int *i);
  * @param i          Pointer to input index
  * @return           None
  */
-void		tokenize_output_redir(t_minishell *minishell, int *k, int *i); 
+void							tokenize_output_redir(t_minishell *minishell,
+									int *k, int *i);
 
 /**
  * @brief #### Handle output append redirection '>>'
@@ -241,7 +266,8 @@ void		tokenize_output_redir(t_minishell *minishell, int *k, int *i);
  * @param i          Pointer to input index
  * @return           None
  */
-void		handle_output_append_redir(t_minishell *minishell, int *k, int *i);
+void							handle_output_append_redir(
+									t_minishell *minishell, int *k, int *i);
 
 /**
  * @brief #### Handle single output redirection '>'
@@ -253,7 +279,8 @@ void		handle_output_append_redir(t_minishell *minishell, int *k, int *i);
  * @param i          Pointer to input index
  * @return           None
  */
-void		handle_output_file_redir(t_minishell *minishell, int *k, int *i);
+void							handle_output_file_redir(t_minishell *minishell,
+									int *k, int *i);
 
 /**
  * @brief #### Tokenize a quoted string
@@ -267,8 +294,9 @@ void		handle_output_file_redir(t_minishell *minishell, int *k, int *i);
  * @param i      Pointer to input index
  * @param glued  Glue status flag
  * @return       1 on success, 0 on error
-*/
-int			tokenize_quoted(t_minishell *ms, int *k, int *i, int glued);
+ */
+int								tokenize_quoted(t_minishell *ms, int *k, int *i,
+									int glued);
 
 /**
  * @brief #### Extract content inside matching quotes
@@ -280,7 +308,8 @@ int			tokenize_quoted(t_minishell *ms, int *k, int *i, int glued);
  * @param quote  Quote character to match
  * @return       Allocated string inside quotes or NULL on error
  */
-char		*read_quoted_content(t_minishell *ms, int *i, char quote);
+char							*read_quoted_content(t_minishell *ms, int *i,
+									char quote);
 
 /**
  * @brief #### Create token from quoted word
@@ -296,7 +325,8 @@ char		*read_quoted_content(t_minishell *ms, int *i, char quote);
  * @param glued  Glue status flag
  * @return       None
  */
-void		create_quoted_token(t_minishell *ms, int *k, char *word, char quote, int glued);
+void							create_quoted_token(t_minishell *ms, int *k,
+									char *word, char quote, int glued);
 
 /**
  * @brief #### Tokenize a normal (unquoted) string segment
@@ -310,7 +340,8 @@ void		create_quoted_token(t_minishell *ms, int *k, char *word, char quote, int g
  * @param glued      Glue status flag
  * @return           None
  */
-void		tokenize_normal_string(t_minishell *minishell, int *k, int *i, int glued);
+void							tokenize_normal_string(t_minishell *minishell,
+									int *k, int *i, int glued);
 
 /**
  * @brief #### Allocate and copy normal word substring
@@ -321,7 +352,8 @@ void		tokenize_normal_string(t_minishell *minishell, int *k, int *i, int glued);
  * @param len    Length of substring
  * @return       Newly allocated substring
  */
-char		*allocate_normal_word(t_minishell *ms, int start, int len);
+char							*allocate_normal_word(t_minishell *ms,
+									int start, int len);
 
 /**
  * @brief #### Create token for normal (unquoted) word
@@ -336,128 +368,141 @@ char		*allocate_normal_word(t_minishell *ms, int start, int len);
  * @param k      Pointer to token index
  * @return       None
  */
-void		fill_normal_token(t_minishell *ms, char *word, int glued, int *k);
-
-
-
+void							fill_normal_token(t_minishell *ms, char *word,
+									int glued, int *k);
 
 //? [ Parser ]
 // void		allocate_commands(t_minishell *ms);
-int			fill_argvs(t_minishell *ms);
-int			process_token_to_fill(t_minishell *ms, t_command **cmd, t_token *tok, int *arg_idx);
-void		argv_for_commands(t_minishell *minishell);
-void		allocate_argv(t_minishell *minishell, int *argc,
-				t_command **cmd, int *i);
+int								fill_argvs(t_minishell *ms);
+int								process_token_to_fill(t_minishell *ms,
+									t_command **cmd, t_token *tok,
+									int *arg_idx);
+void							argv_for_commands(t_minishell *minishell);
+void							allocate_argv(t_minishell *minishell, int *argc,
+									t_command **cmd, int *i);
 // void		if_output_files_append(t_minishell *minishell, t_token *token,
-				// t_command **cmd, int *i);
-void		if_output_pipe(t_token *token, t_command **cmd, int *argc);
-void		tokens_to_commands(t_minishell *minishell);
+// t_command **cmd, int *i);
+void							if_output_pipe(t_token *token, t_command **cmd,
+									int *argc);
+void							tokens_to_commands(t_minishell *minishell);
 // void		if_input_files_heredoc(t_minishell *minishell, t_token *token,
-				// t_command **cmd, int *i);
+// t_command **cmd, int *i);
 
 //? [ Execution ]
-void		execute_piped_commands(t_minishell *ms, int cmd_count);
-void		compare_commands(t_minishell *shell);
-int			exec_builtin(t_minishell *shell);
-void		execute_single_command(t_minishell *ms);
-int			is_command_empty(t_command *cmd);
-void	execute_external_command(t_minishell *shell, char **argv);
-int			prepare_command_processing(t_minishell *ms);
-void		execute_commands(t_minishell *ms);
+void							execute_piped_commands(t_minishell *ms,
+									int cmd_count);
+void							compare_commands(t_minishell *shell);
+int								exec_builtin(t_minishell *shell);
+void							execute_single_command(t_minishell *ms);
+int								is_command_empty(t_command *cmd);
+void							execute_external_command(t_minishell *shell, char **argv);
+int								prepare_command_processing(t_minishell *ms);
+void							execute_commands(t_minishell *ms);
 
 //? [Heredoc]
 /* heredoc utils */
-int			process_heredoc(t_minishell *shell, char *delimiter);
-int			should_expand_heredoc(t_minishell *shell, char *delimiter);
-int			read_heredoc_content(t_minishell *shell, char *delimiter,
-				int should_expand);
-int			read_until_delimiter(t_minishell *shell, char *delimiter,
-				int fd, int should_expand);
-int			process_heredoc_readline(int fd, char *line, char *delimiter);
+int								process_heredoc(t_minishell *shell,
+									char *delimiter);
+int								should_expand_heredoc(t_minishell *shell,
+									char *delimiter);
+int								read_heredoc_content(t_minishell *shell,
+									char *delimiter, int should_expand);
+int								read_until_delimiter(t_minishell *shell,
+									char *delimiter, int fd, int should_expand);
+int								process_heredoc_readline(int fd, char *line,
+									char *delimiter);
 
-char		*append_single_char(char *result, char c);
-char		*append_to_result(char *result, char *to_append);
-int			create_heredoc_pipe(char *content);
-char		*expand_env_var(t_minishell *shell, char *content,
-				char *result, int *i);
-char		*expand_exit_code(t_minishell *shell, char *result, int *i);
-char		*expand_heredoc_variables(t_minishell *shell, char *content);
-char		*extract_var_name(char *str, int *index);
-int			is_delimiter_line(char *line, char *delimiter);
-void		print_eof_warning(char *delimiter);
+char							*append_single_char(char *result, char c);
+char							*append_to_result(char *result,
+									char *to_append);
+int								create_heredoc_pipe(char *content);
+char							*expand_env_var(t_minishell *shell,
+									char *content, char *result, int *i);
+char							*expand_exit_code(t_minishell *shell,
+									char *result, int *i);
+char							*expand_heredoc_variables(t_minishell *shell,
+									char *content);
+char							*extract_var_name(char *str, int *index);
+int								is_delimiter_line(char *line, char *delimiter);
+void							print_eof_warning(char *delimiter);
 // int			handle_redirection(t_minishell *shell);
-int			input_redirection(t_command *cmd, t_redirection *redir);
+int								input_redirection(t_command *cmd,
+									t_redirection *redir);
 // int			handle_output_redirection(t_command *cmd);
 
 /* heredoc main processing */
 // int			process_all_heredocs(t_minishell *minishell);
-int			process_discarded_heredocs(t_minishell *minishell, t_command *cmd);
-int			setup_heredoc_input(t_redirection *redir);
+int								process_discarded_heredocs(
+									t_minishell *minishell, t_command *cmd);
+int								setup_heredoc_input(t_redirection *redir);
 
 //? [ Builtins ]
-void		cd_builtin(t_minishell *shell);
-void		echo_builtin(t_minishell *shell);
-void		env_builtin(t_minishell *shell);
-void		exit_builtin(t_minishell *shell);
-void		export_builtin(t_minishell *shell);
-void		pwd_builtin(t_minishell *shell);
-void		unset_builtin(t_minishell *shell);
+void							cd_builtin(t_minishell *shell);
+void							echo_builtin(t_minishell *shell);
+void							env_builtin(t_minishell *shell);
+void							exit_builtin(t_minishell *shell);
+void							export_builtin(t_minishell *shell);
+void							pwd_builtin(t_minishell *shell);
+void							unset_builtin(t_minishell *shell);
 
 // Returns strdup'ed path if cmd already contains
 // '/' and is executable, else NULL
-char		*already_path(char *cmd);
+char							*already_path(char *cmd);
 
 // Searches PATH env string for executable cmd,
 // returns malloc'ed full path or NULL
-char		*find_cmd_path(char *cmd, char *path_env);
+char							*find_cmd_path(char *cmd, char *path_env);
 
 // Retrieves PATH environment variable value string
 // from env linked list (no strdup)
-char		*find_path(t_env *env);
+char							*find_path(t_env *env);
 
-// Top-level function to get full command path 
+// Top-level function to get full command path
 // (already absolute or resolved from PATH)
-char    *get_path(t_minishell *shell, char **argv);
+char							*get_path(t_minishell *shell, char **argv);
 
 // Checks if given path is executable by current user
-int			is_executable(char *path);
+int								is_executable(char *path);
 
 // Concatenates directory path and cmd into a full path string
-char		*join_path(const char *path, const char *cmd);
+char							*join_path(const char *path, const char *cmd);
 
 //? [ Signals ]
 
 //? [ Expanssion ]
-char		*expand_variable(t_minishell *ms, char *token);
-char		*extract_literal(char *token, size_t *i);
-void		handle_dollar(t_minishell *ms, char *token, size_t *i,
-				char **result);
-char		*extract_var_value(t_minishell *ms, char *token, size_t *i);
-char		*handle_empty_expansion(char *token);
-int			expand_tokens(t_minishell *ms);
-void		expand_and_split_token(t_minishell *ms, t_token *token,
-				t_token **new_tokens, int *new_count);
-void		handle_unquoted_token(t_minishell *ms, t_token *token,
-				char *expanded,
-				t_token **new_tokens, int *new_count, int did_expand);
-void		handle_single_quoted_token(t_token *token,
-				t_token **new_tokens, int *new_count);
-void		handle_double_quoted_token(t_token *token,
-				char *expanded,
-				t_token **new_tokens, int *new_count, int did_expand);
-void		handle_first_split_token(t_token *token, const char *word,
-				int did_expand,
-				t_token **new_tokens, int *new_count);
+char							*expand_variable(t_minishell *ms, char *token);
+char							*extract_literal(char *token, size_t *i);
+void							handle_dollar(t_minishell *ms, char *token,
+									size_t *i, char **result);
+char							*extract_var_value(t_minishell *ms, char *token,
+									size_t *i);
+char							*handle_empty_expansion(char *token);
+int								expand_tokens(t_minishell *ms);
+void							expand_and_split_token(t_minishell *ms,
+									t_token *token, t_token **new_tokens,
+									int *new_count);
+void							handle_unquoted_token(t_minishell *ms,
+									t_token *token, char *expanded,
+									t_token **new_tokens, int *new_count,
+									int did_expand);
+void							handle_single_quoted_token(t_token *token,
+									t_token **new_tokens, int *new_count);
+void							handle_double_quoted_token(t_token *token,
+									char *expanded, t_token **new_tokens,
+									int *new_count, int did_expand);
+void							handle_first_split_token(t_token *token,
+									const char *word, int did_expand,
+									t_token **new_tokens, int *new_count);
 
 /**
  * @brief #### Update 'SHLVL' value
- * @brief - Add `1` positive, 
+ * @brief - Add `1` positive,
  * @brief - Start from `1` if negative
  * @param ms   Minishell structure
  * @param env  Env linked list
  * @return     Nothing
-*/
-int			increase_shlvl_var(t_minishell *ms, t_env *env);
+ */
+int								increase_shlvl_var(t_minishell *ms, t_env *env);
 
 /**
  * @brief #### Create a new env node from a string
@@ -469,7 +514,8 @@ int			increase_shlvl_var(t_minishell *ms, t_env *env);
  * @param environ  Env variable string "NAME=VALUE"
  * @return         Pointer to new env node, or NULL if no '=' found
  */
-t_env		*create_env_node(t_minishell *minishell, char *environ);
+t_env							*create_env_node(t_minishell *minishell,
+									char *environ);
 
 /**
  * @brief #### Append a node to the env linked list
@@ -481,7 +527,8 @@ t_env		*create_env_node(t_minishell *minishell, char *environ);
  * @param tail      Pointer to tail of list
  * @return          None
  */
-void		append_env_node(t_env *new_node, t_env **head, t_env **tail);
+void							append_env_node(t_env *new_node, t_env **head,
+									t_env **tail);
 
 /**
  * @brief #### Get value of an env variable
@@ -492,7 +539,8 @@ void		append_env_node(t_env *new_node, t_env **head, t_env **tail);
  * @param var  Variable name to search
  * @return     Pointer to value string, or "" if not found
  */
-char		*get_env_value(t_env *env, const char *var, char *argv);
+char							*get_env_value(t_env *env, const char *var,
+									char *argv);
 
 /**
  * @brief #### Update value of an existing env variable
@@ -503,9 +551,9 @@ char		*get_env_value(t_env *env, const char *var, char *argv);
  * @param name   Variable name
  * @param value  New value
  * @return       1 if updated, 0 if not found
-*/
-int			update_existing_env_var(t_minishell *shell,
-				char *name, char *value);
+ */
+int								update_existing_env_var(t_minishell *shell,
+									char *name, char *value);
 
 /**
  * @brief #### Create and add a new env variable
@@ -517,8 +565,9 @@ int			update_existing_env_var(t_minishell *shell,
  * @param name   Variable name
  * @param value  Variable value
  * @return       None
-*/
-int			create_new_env_var(t_minishell *shell, char *name, char *value);
+ */
+int								create_new_env_var(t_minishell *shell,
+									char *name, char *value);
 
 /**
  * @brief #### Update envp array with a variable
@@ -529,8 +578,9 @@ int			create_new_env_var(t_minishell *shell, char *name, char *value);
  * @param name   Variable name
  * @param value  Variable value
  * @return       None
-*/
-int			update_envp_array(t_minishell *shell, char *name, char *value);
+ */
+int								update_envp_array(t_minishell *shell,
+									char *name, char *value);
 
 /**
  * @brief #### Append new entry to envp array
@@ -542,9 +592,10 @@ int			update_envp_array(t_minishell *shell, char *name, char *value);
  * @param shell      Minishell context
  * @param new_entry  "NAME=VALUE" string to append
  * @return 0 on failure
- *  1     success     
-*/
-int			append_envp(t_minishell *shell, char *new_entry);
+ *  1     success
+ */
+int								append_envp(t_minishell *shell,
+									char *new_entry);
 
 /**
  * @brief #### Build "NAME=VALUE" string
@@ -554,7 +605,7 @@ int			append_envp(t_minishell *shell, char *new_entry);
  * @param value  Variable value
  * @return       Newly allocated "NAME=VALUE" string
  */
-char		*build_envp_entry(char *name, char *value);
+char							*build_envp_entry(char *name, char *value);
 
 /**
  * @brief #### Replace variable in envp array if it exists
@@ -564,9 +615,9 @@ char		*build_envp_entry(char *name, char *value);
  * @param name       Variable name
  * @param new_entry  New "NAME=VALUE" string
  * @return           1 if replaced, 0 if not found
-*/
-int			replace_existing_envp(t_minishell *shell, char *name,
-				char *new_entry);
+ */
+int								replace_existing_envp(t_minishell *shell,
+									char *name, char *new_entry);
 
 /**
  * @brief #### Update or create an env variable
@@ -576,18 +627,20 @@ int			replace_existing_envp(t_minishell *shell, char *name,
  * @param name   Variable name
  * @param value  Variable value
  * @return       None
-*/
-int			update_env_var(t_minishell *shell, char *name, char *value);
+ */
+int								update_env_var(t_minishell *shell, char *name,
+									char *value);
 
 //? [ Errors ]
 
-int			validate_syntax(t_minishell *ms);
-int			check_pipe_syntax(t_minishell *ms, int i);
-int			check_redirection_syntax(t_minishell *ms, int *i);
+int								validate_syntax(t_minishell *ms);
+int								check_pipe_syntax(t_minishell *ms, int i);
+int								check_redirection_syntax(t_minishell *ms,
+									int *i);
 
 //?  [ Init ]
 
-char		**init_split_array(char *str, int *word_count);
+char							**init_split_array(char *str, int *word_count);
 
 /**
  * @brief #### Initialize minishell structure
@@ -600,7 +653,8 @@ char		**init_split_array(char *str, int *word_count);
  * @param environ  Environment variables array
  * @return         None
  */
-void		init(t_minishell *ms, char **environ, char *argv);
+void							init(t_minishell *ms, char **environ,
+									char *argv);
 
 /**
  * @brief #### Create env linked list from environ array
@@ -610,13 +664,14 @@ void		init(t_minishell *ms, char **environ, char *argv);
  * @param environ    Environment variables array
  * @return           Head of env linked list
  */
-t_env		*init_env(t_minishell *minishell, char **environ);
+t_env							*init_env(t_minishell *minishell,
+									char **environ);
 
-int			init_shell(t_minishell *minishell);
+int								init_shell(t_minishell *minishell);
 
 //? [ Free ]
 
-void		free_split_array(char **array);
+void							free_split_array(char **array);
 
 /**
  * @brief #### Exit minishell with cleanup
@@ -629,7 +684,8 @@ void		free_split_array(char **array);
  * @param status  Exit status code
  * @return        Does not return
  */
-void		ft_exit(t_minishell *shell, char *msg, int status);
+void							ft_exit(t_minishell *shell, char *msg,
+									int status);
 
 /**
  * @brief #### Free simple allocated resources
@@ -637,7 +693,7 @@ void		ft_exit(t_minishell *shell, char *msg, int status);
  * @param shell  Minishell context
  * @return       None
  */
-void		free_simple_resources(t_minishell *shell);
+void							free_simple_resources(t_minishell *shell);
 
 /**
  * @brief #### Free complex allocated resources
@@ -646,7 +702,7 @@ void		free_simple_resources(t_minishell *shell);
  * @param shell  Minishell context
  * @return       None
  */
-void		free_complex_resources(t_minishell *shell);
+void							free_complex_resources(t_minishell *shell);
 
 /**
  * @brief #### Free all command nodes and their resources
@@ -656,7 +712,7 @@ void		free_complex_resources(t_minishell *shell);
  * @param minishell  Minishell context
  * @return           None
  */
-void		free_commands(t_minishell *minishell);
+void							free_commands(t_minishell *minishell);
 
 /**
  * @brief #### Free a NULL-terminated 2D string array
@@ -665,7 +721,7 @@ void		free_commands(t_minishell *minishell);
  * @param arr  2D string array
  * @return     None
  */
-void		free_2d(char **arr);
+void							free_2d(char **arr);
 
 /**
  * @brief #### Free token array and contained tokens
@@ -674,7 +730,7 @@ void		free_2d(char **arr);
  * @param tokens  Array of token pointers
  * @return        None
  */
-void		free_tokens(t_token **tokens);
+void							free_tokens(t_token **tokens);
 
 /**
  * @brief #### Free entire env linked list
@@ -683,29 +739,31 @@ void		free_tokens(t_token **tokens);
  * @param env  Head of env linked list
  * @return     None
  */
-void		free_env(t_env *env);
+void							free_env(t_env *env);
 
-void		check_to_free(t_minishell *minishell);
+void							check_to_free(t_minishell *minishell);
 
-void		free_token(t_token *token);
+void							free_token(t_token *token);
 
 //? [ Minilib ]
-int			is_builtin(t_command *cmd);
-int			update_glued(t_minishell *ms, int *i, int token_index);
-void		count_pipe(t_minishell *minishell);
-int			count_max_tokens_after_expansion(t_minishell *ms);
-char		*append_result(char *old_result, char *value);
-void		append_and_free(char **result, char *to_add);
-int			count_words_in_string(char *str);
-char		*extract_word(char *str, int *index);
-char		**split_on_whitespace(char *str);
-int			is_whitespace(char c);
-void		copy_token_to_argvs(t_minishell *ms, t_command *cmd,
-				t_token *tok, int arg_idx);
-char		**add_to_list(char **old_list, char *value);
-int			has_more_redirections(t_token **tokens,
-				int start_index, t_type t1, t_type t2);
-void		print_sorted_env(t_minishell *minishell);
+int								is_builtin(t_command *cmd);
+int								update_glued(t_minishell *ms, int *i,
+									int token_index);
+void							count_pipe(t_minishell *minishell);
+int								count_max_tokens_after_expansion(
+									t_minishell *ms);
+char							*append_result(char *old_result, char *value);
+void							append_and_free(char **result, char *to_add);
+int								count_words_in_string(char *str);
+char							*extract_word(char *str, int *index);
+char							**split_on_whitespace(char *str);
+int								is_whitespace(char c);
+void							copy_token_to_argvs(t_minishell *ms,
+									t_command *cmd, t_token *tok, int arg_idx);
+char							**add_to_list(char **old_list, char *value);
+int								has_more_redirections(t_token **tokens,
+									int start_index, t_type t1, t_type t2);
+void							print_sorted_env(t_minishell *minishell);
 
 /**
  * @brief #### Check if string is a positive number
@@ -714,8 +772,8 @@ void		print_sorted_env(t_minishell *minishell);
  * @brief - Return 1 if all digits
  * @param s  Input string
  * @return   1 if positive number, 0 otherwise
-*/
-int			is_positive_number(const char *s); //? Done
+ */
+int								is_positive_number(const char *s); //? Done
 
 /**
  * @brief #### Print ASCII banner in two parts
@@ -724,7 +782,7 @@ int			is_positive_number(const char *s); //? Done
  * @brief - Use print_slowly for gradual output
  * @return None
  */
-void		print_banner(void);
+void							print_banner(void);
 
 /**
  * @brief #### Print string slowly to stdout
@@ -733,7 +791,7 @@ void		print_banner(void);
  * @param line  String to print
  * @return      None
  */
-void		print_slowly(const char *line);
+void							print_slowly(const char *line);
 
 /**
  * @brief #### Handle EOF (Ctrl+D) in minishell
@@ -744,31 +802,31 @@ void		print_slowly(const char *line);
  * @param minishell  Minishell context
  * @return           None
  */
-void		handle_eof(t_minishell *minishell);
+void							handle_eof(t_minishell *minishell);
 
 //? [ Signals ]
-void		setup_signals_parent(void);
-void		setup_signals_child(void);
-void		setup_signals_readline(void);
-void		setup_signals_heredoc(void);
-void		setup_signals_execution(void);
-void		sigint_handler(int sig);
+void							setup_signals_parent(void);
+void							setup_signals_child(void);
+void							setup_signals_readline(void);
+void							setup_signals_heredoc(void);
+void							setup_signals_execution(void);
+void							sigint_handler(int sig);
 
 //? [ Debug ]
 
-void		debug_command(const t_command *cmd);
+void							debug_command(const t_command *cmd);
 // void		print_re(t_command *cmd);
 
 //#### Print the environment variables array
-void		debug_print_envp_array(char **envp);
+void							debug_print_envp_array(char **envp);
 
 //#### Print the environment variables linked list
-void		debug_print_env_list(t_env *env);
+void							debug_print_env_list(t_env *env);
 
 // Print the tokens array
-void		debug_print_tokens(t_token **tokens);
-//hala edition
-void		handlequit(int sig);
-void		handle_c(int sig);
-void		setup_sig_exc(int sig, void (*handler)(int));
-# endif
+void							debug_print_tokens(t_token **tokens);
+// hala edition
+void							handlequit(int sig);
+void							handle_c(int sig);
+void							setup_sig_exc(int sig, void (*handler)(int));
+#endif

@@ -5,10 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-08-16 11:06:48 by baal-moh          #+#    #+#             */
-/*   Updated: 2025-08-16 11:06:48 by baal-moh         ###   ########.fr       */
+/*   Created: 2025-08-16 13:04:43 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 13:04:43 by baal-moh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "minishell.h"
 
 void	append_and_free(char **result, char *to_add)

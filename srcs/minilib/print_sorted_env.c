@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025-08-16 11:24:45 by baal-moh          #+#    #+#             */
-/*   Updated: 2025-08-16 11:24:45 by baal-moh         ###   ########.fr       */
+/*   Created: 2025-08-16 13:05:42 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 13:05:42 by baal-moh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,12 +72,11 @@ void	print_sorted_env_sort_names(char **names, int count)
 
 //*#### Prints environment variables in sorted order by matching names
 void	print_sorted_env_print(t_minishell *minishell, char **sorted_names,
-		int count)
+		int count, int i)
 {
-	int		i;
 	t_env	*current;
 
-	for (i = 0; i < count; i++) // !todo: norm error
+	while (i < count)
 	{
 		current = minishell->env;
 		while (current)
@@ -97,6 +96,7 @@ void	print_sorted_env_print(t_minishell *minishell, char **sorted_names,
 			}
 			current = current->next;
 		}
+		i++;
 	}
 }
 
@@ -115,6 +115,6 @@ void	print_sorted_env(t_minishell *minishell)
 	if (!sorted_names)
 		return ;
 	print_sorted_env_sort_names(sorted_names, count);
-	print_sorted_env_print(minishell, sorted_names, count);
+	print_sorted_env_print(minishell, sorted_names, count,0);
 	free(sorted_names);
 }
