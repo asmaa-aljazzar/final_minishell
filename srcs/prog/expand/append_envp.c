@@ -1,14 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   append_envp.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 17:20:19 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 17:22:09 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	append_envp(t_minishell *shell, char *new_entry)
 {
 	int		count;
 	int		i;
-	char	**new_envp; // new array to replace
+	char	**new_envp;
+
 	count = 0;
 	while (shell->envp && shell->envp[count])
-		count++;                                     // for new size
-	new_envp = malloc(sizeof(char *) * (count + 2)); // new element and NULL
+		count++;
+	new_envp = malloc(sizeof(char *) * (count + 2));
 	if (!new_envp)
 	{
 		free(new_entry);
@@ -23,6 +36,6 @@ int	append_envp(t_minishell *shell, char *new_entry)
 	new_envp[count] = new_entry;
 	new_envp[count + 1] = NULL;
 	free(shell->envp);
-	shell->envp = new_envp; // replace after free
+	shell->envp = new_envp;
 	return (1);
 }

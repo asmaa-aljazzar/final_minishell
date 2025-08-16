@@ -1,12 +1,24 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_tokens.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 17:22:47 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 17:22:48 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 int	expand_tokens(t_minishell *ms)
 {
-	int	new_count;
-	int	max_tokens;
-	int	i;
-	t_token **new_tokens;
-	
+	int		new_count;
+	int		max_tokens;
+	int		i;
+	t_token	**new_tokens;
+
 	i = 0;
 	new_count = 0;
 	if (!ms->tok)

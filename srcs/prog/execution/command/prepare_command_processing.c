@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   prepare_command_processing.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 16:45:01 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 16:45:02 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int prepare_command_processing(t_minishell *ms)
+int	prepare_command_processing(t_minishell *ms)
 {
 	if (!ms->input || !ms->tok)
 		return (-1);
@@ -18,5 +30,3 @@ int prepare_command_processing(t_minishell *ms)
 	tokens_to_commands(ms);
 	return (0);
 }
-
-

@@ -1,10 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   is_executable.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 16:56:05 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 16:56:33 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
-// checks if is executable
-int is_executable(char *path)
+
+int	is_executable(char *path)
 {
-    if (access(path, X_OK) == 0)
-        return (1);
-        
-    return (0);
+	if (access(path, X_OK) == 0)
+		return (1);
+	return (0);
 }

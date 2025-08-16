@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   handle_unquoted_token.c                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 17:23:03 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 17:29:32 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	handle_unquoted_token(t_minishell *ms, t_token *token, char *expanded,
@@ -24,7 +36,8 @@ void	handle_unquoted_token(t_minishell *ms, t_token *token, char *expanded,
 					new_tokens, new_count);
 			else
 				new_tokens[(*new_count)++] = create_new_token(ms,
-						split_words[j], did_expand);
+						split_words[j],
+						did_expand);
 			j++;
 		}
 	}

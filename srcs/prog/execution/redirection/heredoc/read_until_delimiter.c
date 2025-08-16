@@ -1,32 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   read_until_delimiter.c                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 17:15:48 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 17:17:45 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int read_until_delimiter(t_minishell *shell, char *delimiter, 
-		int fd, int should_expand)
+int	read_until_delimiter(t_minishell *shell, char *delimiter, int fd,
+		int should_expand)
 {
-    char *line;
-	char *expanded;
+	char	*line;
+	char	*expanded;
 
-    while (1)
-    {
-        line = readline("> ");
-        if (g_signal_received == SIGINT)
-        {
-            // fprintf(stderr, "%d\n", (g_signal_received == SIGINT));
-            free(line);
-            dup2(2, 0);
-            return  -1; // Abort heredoc input
-         }
-        if (!line)
-            return (-1);
+	while (1)
+	{
+		line = readline("> ");
+		if (g_signal_received == SIGINT)
+		{
+			free(line);
+			dup2(2, 0);
+			return (-1);
+		}
+		if (!line)
+			return (-1);
 		if (should_expand)
-    	{
-        	expanded = expand_heredoc_variables(shell, line);
-        	free(line);
-        	line = expanded;
-    	}
-        if (process_heredoc_readline(fd, line, delimiter) == -1)
-			break; // Exit loop if delimiter is reached or EOF
-    }
-    // g_signal_received = 0;
-    return (0);
+		{
+			expanded = expand_heredoc_variables(shell, line);
+			free(line);
+			line = expanded;
+		}
+		if (process_heredoc_readline(fd, line, delimiter) == -1)
+			break ;
+	}
+	return (0);
 }

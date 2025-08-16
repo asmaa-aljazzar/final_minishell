@@ -109,7 +109,6 @@ HEREDOC_SRC =	$(HEREDOC_DIR)append_single_char.c\
 				$(HEREDOC_DIR)extract_var_name.c\
 				$(HEREDOC_DIR)is_delimiter_line.c\
 				$(HEREDOC_DIR)print_eof_warning.c\
-				$(HEREDOC_DIR)process_discarded_heredocs.c\
 				$(HEREDOC_DIR)process_heredoc.c\
 				$(HEREDOC_DIR)process_heredoc_readline.c\
 				$(HEREDOC_DIR)read_heredoc_content.c\
@@ -118,12 +117,7 @@ HEREDOC_SRC =	$(HEREDOC_DIR)append_single_char.c\
 				$(HEREDOC_DIR)setup_heredoc_input.c\
 				$(HEREDOC_DIR)expand_heredoc_variable.c\
 
-I_O_A_SRC	=	$(I_O_A_DIR)handell_redirection.c\
-				$(I_O_A_DIR)input_redirection.c\
-				$(I_O_A_DIR)output_redirection.c\
-
 REDIR_SRC	=	$(HEREDOC_SRC)\
-				$(I_O_A_SRC)
 
 COMM_SRC	=	$(COMM_DIR)compare_commands.c\
 				$(COMM_DIR)exec_builtin.c\
@@ -218,7 +212,7 @@ PROG_SRC	=	$(INIT_SRC)\
 SRCS	=	$(MAIN_SRC)\
 			$(MINILIB_SRC)\
 			$(PROG_SRC)\
-			
+
 
 OBJS	= $(patsubst $(SRCS_DIR)%.c,$(OBJS_DIR)%.o,$(SRCS))
 

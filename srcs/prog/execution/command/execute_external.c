@@ -1,13 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute_external.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 16:44:54 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 16:48:04 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 // execute_external_command.c
 #include "minishell.h"
+
 //*#### Execute external command
 // • Handle absolute/relative paths
 // • Reject execution of directories
 // • Print clear error messages for invalid commands
-void execute_external_command(t_minishell *shell, char **argv)
+void	execute_external_command(t_minishell *shell, char **argv)
 {
-	char *cmd_path;
-	struct stat st;
+	char		*cmd_path;
+	struct stat	st;
 
 	if (!argv || !argv[0] || argv[0][0] == '\0')
 	{
@@ -23,7 +36,8 @@ void execute_external_command(t_minishell *shell, char **argv)
 	}
 	if (ft_strcmp(argv[0], ".") == 0)
 	{
-		ft_putstr_fd("minishell: .: filename argument required\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: .: filename argument required\n",
+			STDERR_FILENO);
 		ft_putstr_fd(".: usage: . filename [arguments]\n", STDERR_FILENO);
 		shell->exit_code = 2;
 		if (argv && shell->pipe_count)
@@ -44,7 +58,6 @@ void execute_external_command(t_minishell *shell, char **argv)
 		}
 		ft_exit(shell, NULL, 127);
 	}
-
 	if (ft_strchr(argv[0], '/'))
 		cmd_path = argv[0];
 	else
@@ -70,11 +83,11 @@ void execute_external_command(t_minishell *shell, char **argv)
 			ft_putstr_fd(argv[0], STDERR_FILENO);
 			ft_putstr_fd(": Not a directory\n", STDERR_FILENO);
 			shell->exit_code = 126;
-		if (argv && shell->pipe_count)
-		{
-			free(argv);
-			argv = NULL;
-		}
+			if (argv && shell->pipe_count)
+			{
+				free(argv);
+				argv = NULL;
+			}
 			ft_exit(shell, NULL, 126);
 		}
 	}

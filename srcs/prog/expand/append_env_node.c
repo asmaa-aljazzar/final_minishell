@@ -1,13 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   append_env_node.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 17:20:14 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 17:20:15 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	append_env_node(t_env *new_node, t_env **head, t_env **tail)
 {
-	if (new_node) // if there is a new node
+	if (new_node)
 	{
-		if (!*head)           // if no node in list
-			*head = new_node; // the head point to the new one
+		if (!*head)
+			*head = new_node;
 		else
-			(*tail)->next = new_node; // the new one set after the last one
-		*tail = new_node;             // the last one its the new one
+			(*tail)->next = new_node;
+		*tail = new_node;
 	}
 }

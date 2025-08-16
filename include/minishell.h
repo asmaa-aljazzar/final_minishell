@@ -253,8 +253,12 @@ void							handle_input_file_redir(t_minishell *minishell,
  * @param i          Pointer to input index
  * @return           None
  */
+<<<<<<< HEAD
 void							tokenize_output_redir(t_minishell *minishell,
 									int *k, int *i);
+=======
+void		tokenize_output_redir(t_minishell *minishell, int *k, int *i);
+>>>>>>> cf99774 (fix norm)
 
 /**
  * @brief #### Handle output append redirection '>>'
@@ -432,9 +436,13 @@ int								input_redirection(t_command *cmd,
 
 /* heredoc main processing */
 // int			process_all_heredocs(t_minishell *minishell);
+<<<<<<< HEAD
 int								process_discarded_heredocs(
 									t_minishell *minishell, t_command *cmd);
 int								setup_heredoc_input(t_redirection *redir);
+=======
+int			setup_heredoc_input(t_redirection *redir);
+>>>>>>> cf99774 (fix norm)
 
 //? [ Builtins ]
 void							cd_builtin(t_minishell *shell);
@@ -593,9 +601,14 @@ int								update_envp_array(t_minishell *shell,
  * @param new_entry  "NAME=VALUE" string to append
  * @return 0 on failure
  *  1     success
+<<<<<<< HEAD
  */
 int								append_envp(t_minishell *shell,
 									char *new_entry);
+=======
+*/
+int			append_envp(t_minishell *shell, char *new_entry);
+>>>>>>> cf99774 (fix norm)
 
 /**
  * @brief #### Build "NAME=VALUE" string
