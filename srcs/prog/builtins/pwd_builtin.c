@@ -1,20 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd_builtin.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 16:26:12 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 16:32:52 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-void pwd_builtin(t_minishell *shell)
+void	pwd_builtin(t_minishell *shell)
 {
-	// t_command *cmd;
-	char *cwd;
+	char	*cwd;
 
-	// cmd = shell->cmd;
 	cwd = getcwd(NULL, 0);
 	if (cwd)
 	{
-		// if (cmd->output_type == OUTPUT_NONE)
-		// 	cmd->output_type = STDOUT_FILENO;
 		write(STDOUT_FILENO, cwd, ft_strlen(cwd));
 		write(STDOUT_FILENO, "\n", 1);
-		free(cwd); // Important: free memory
+		free(cwd);
 	}
 	else
 	{

@@ -1,54 +1,57 @@
-// echo_builtin.c
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   echo_builtin.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 15:55:26 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 16:05:49 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-// Helper function to check if string is a valid -n flag
-// Valid: -n, -nn, -nnn, etc.
-// Invalid: -nm, -n123, etc.
-static int is_valid_n_flag(char *str)
+static int	is_valid_n_flag(char *str)
 {
-    int i = 0;
-    
-    if (str[i++] != '-')
-        return (0);
-    
-    if (str[i] != 'n')
-        return (0);
-    
-    // Check if all remaining characters are 'n'
-    while (str[i])
-    {
-        if (str[i] != 'n')
-            return (0);
-        i++;
-    }
-    
-    return (1);
+	int	i;
+
+	i = 0;
+	if (str[i++] != '-')
+		return (0);
+	if (str[i] != 'n')
+		return (0);
+	while (str[i])
+	{
+		if (str[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-void echo_builtin(t_minishell *shell)
+void	echo_builtin(t_minishell *shell)
 {
-    t_command *cmd = shell->cmd;
-    int i = 1;
-    int newline = 1;
-    
-    // Process all -n flags
-    while (cmd->argv[i] && is_valid_n_flag(cmd->argv[i]))
-    {
-        newline = 0;
-        i++;
-    }
-    
-    // Print arguments
-    while (cmd->argv[i])
-    {
-        ft_putstr_fd(cmd->argv[i], STDOUT_FILENO);
-        if (cmd->argv[i + 1])
-            ft_putstr_fd(" ", STDOUT_FILENO);
-        i++;
-    }
-    
-    if (newline)
-        ft_putstr_fd("\n", STDOUT_FILENO);
-    
-    shell->exit_code = 0;
+	t_command	*cmd;
+	int			i;
+	int			newline;
+
+	cmd = shell->cmd;
+	i = 1;
+	newline = 1;
+	while (cmd->argv[i] && is_valid_n_flag(cmd->argv[i]))
+	{
+		newline = 0;
+		i++;
+	}
+	while (cmd->argv[i])
+	{
+		ft_putstr_fd(cmd->argv[i], STDOUT_FILENO);
+		if (cmd->argv[i + 1])
+			ft_putstr_fd(" ", STDOUT_FILENO);
+		i++;
+	}
+	if (newline)
+		ft_putstr_fd("\n", STDOUT_FILENO);
+	shell->exit_code = 0;
 }

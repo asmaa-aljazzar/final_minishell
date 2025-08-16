@@ -1,123 +1,138 @@
-#include "minishell.h"
-
-static int is_valid_identifier(const char *str);
-static void remove_from_env_list(t_minishell *shell, const char *name);
-static void remove_from_envp_array(t_minishell *shell, const char *name);
-
-void unset_builtin(t_minishell *shell)
-{
-    t_command *cmd = shell->cmd;
-    int i = 1;
-
-    shell->exit_code = 0;
-
-    if (!cmd->argv[1])
-        return;
-
-    while (cmd->argv[i])
-    {
-        if (is_valid_identifier(cmd->argv[i]))
-        {
-            remove_from_env_list(shell, cmd->argv[i]);
-            remove_from_envp_array(shell, cmd->argv[i]);
-        }
-        // Invalid identifiers are silently ignored, no error message
-        i++;
-    }
-}
-
-static void remove_from_env_list(t_minishell *shell, const char *name)
-{
-    t_env *current = shell->env;
-    t_env *prev = NULL;
-
-    while (current)
-    {
-        if (ft_strcmp(current->name, name) == 0)
-        {
-            if (prev)
-                prev->next = current->next;
-            else
-                shell->env = current->next;
-
-            free(current->name);
-            if (current->value)
-                free(current->value);
-            free(current);
-            return;
-        }
-        prev = current;
-        current = current->next;
-    }
-}
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset_builtin.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aaljazza <aaljazza@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 16:26:14 by aaljazza          #+#    #+#             */
+/*   Updated: 2025/08/16 16:34:09 by aaljazza         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "minishell.h"
 
-static int count_envp(char **envp)
+static int	is_valid_identifier(const char *str);
+static void	remove_from_env_list(t_minishell *shell, const char *name);
+static void	remove_from_envp_array(t_minishell *shell, const char *name);
+
+void	unset_builtin(t_minishell *shell)
 {
-    int count = 0;
-    if (!envp)
-        return 0;
-    while (envp[count])
-        count++;
-    return count;
+	t_command	*cmd;
+	int			i;
+
+	cmd = shell->cmd;
+	i = 1;
+	shell->exit_code = 0;
+	if (!cmd->argv[1])
+		return ;
+	while (cmd->argv[i])
+	{
+		if (is_valid_identifier(cmd->argv[i]))
+		{
+			remove_from_env_list(shell, cmd->argv[i]);
+			remove_from_envp_array(shell, cmd->argv[i]);
+		}
+		i++;
+	}
 }
 
-static int is_name_match(const char *env_str, const char *name)
+static void	remove_from_env_list(t_minishell *shell, const char *name)
 {
-    int name_len = ft_strlen(name);
-    return (ft_strncmp(env_str, name, name_len) == 0 && env_str[name_len] == '=');
+	t_env	*current;
+	t_env	*prev;
+
+	current = shell->env;
+	prev = NULL;
+	while (current)
+	{
+		if (ft_strcmp(current->name, name) == 0)
+		{
+			if (prev)
+				prev->next = current->next;
+			else
+				shell->env = current->next;
+			free(current->name);
+			if (current->value)
+				free(current->value);
+			free(current);
+			return ;
+		}
+		prev = current;
+		current = current->next;
+	}
 }
 
-static void copy_envp_except_name(char **old_envp, char **new_envp, const char *name)
+static int	count_envp(char **envp)
 {
-    int i = 0;
-    int j = 0;
+	int	count;
 
-    while (old_envp[i])
-    {
-        if (!is_name_match(old_envp[i], name))
-            new_envp[j++] = old_envp[i];
-        else
-            free(old_envp[i]);
-        i++;
-    }
-    new_envp[j] = NULL;
+	count = 0;
+	if (!envp)
+		return (0);
+	while (envp[count])
+		count++;
+	return (count);
 }
 
-void remove_from_envp_array(t_minishell *shell, const char *name)
+static int	is_name_match(const char *env_str, const char *name)
 {
-    int count = count_envp(shell->envp);
-    char **new_envp;
+	int	name_len;
 
-    if (count == 0)
-        return;
-
-    new_envp = malloc(sizeof(char *) * (count + 1));
-    if (!new_envp)
-        return;
-
-    copy_envp_except_name(shell->envp, new_envp, name);
-
-    free(shell->envp);
-    shell->envp = new_envp;
+	name_len = ft_strlen(name);
+	return (ft_strncmp(env_str, name, name_len) == 0
+		&& env_str[name_len] == '=');
 }
 
-
-static int is_valid_identifier(const char *str)
+static void	copy_envp_except_name(char **old_envp, char **new_envp,
+		const char *name)
 {
-    int i;
+	int	i;
+	int	j;
 
-    if (!str || str[0] == '\0')
-        return 0;
+	i = 0;
+	j = 0;
+	while (old_envp[i])
+	{
+		if (!is_name_match(old_envp[i], name))
+			new_envp[j++] = old_envp[i];
+		else
+			free(old_envp[i]);
+		i++;
+	}
+	new_envp[j] = NULL;
+}
 
-    if (!ft_isalpha(str[0]) && str[0] != '_')
-        return 0;
+void	remove_from_envp_array(t_minishell *shell, const char *name)
+{
+	int		count;
+	char	**new_envp;
 
-    for (i = 1; str[i]; i++)
-    {
-        if (!ft_isalnum(str[i]) && str[i] != '_')
-            return 0;
-    }
-    return 1;
+	count = count_envp(shell->envp);
+	if (count == 0)
+		return ;
+	new_envp = malloc(sizeof(char *) * (count + 1));
+	if (!new_envp)
+		return ;
+	copy_envp_except_name(shell->envp, new_envp, name);
+	free(shell->envp);
+	shell->envp = new_envp;
+}
+
+static int	is_valid_identifier(const char *str)
+{
+	int	i;
+
+	if (!str || str[0] == '\0')
+		return (0);
+	if (!ft_isalpha(str[0]) && str[0] != '_')
+		return (0);
+	i = 1;
+	while (str[i])
+	{
+		if (!ft_isalnum(str[i]) && str[i] != '_')
+			return (0);
+		i++;
+	}
+	return (1);
 }
