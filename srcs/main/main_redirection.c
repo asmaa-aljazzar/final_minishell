@@ -1,41 +1,11 @@
 #include "minishell.h"
 
-#include "minishell.h"
-
-//*#### Redirect stdin from the last input file in input_files array
-// int main_redir_input_from_files(t_command *cmd)
-// {
-//     int fd;
-//     int i;
-
-//     if (!cmd->redir)
-//         return 0;
-//     i = 0;
-//     while (cmd->input_files[i])
-//         i++;
-//     fd = open(cmd->input_files[i], O_RDONLY);
-//     if (fd < 0)
-//     {
-//         ft_putstr_fd("minishell: ", STDERR_FILENO);
-//         perror(cmd->input_files[i]);
-//         return -1;
-//     }
-//     if (dup2(fd, STDIN_FILENO) < 0)
-//     {
-//         perror("dup2");
-//         close(fd);
-//         return -1;
-//     }
-//     close(fd);
-//     return 0;
-// }
-
 int input_redirection(t_command *cmd, t_redirection *redir)
 {
     int fd;
 
     if (!cmd || !redir)
-        return 0; // No input redirection needed
+        return 0;
     fd = open(redir->file, O_RDONLY);
     if (fd < 0)
 	{

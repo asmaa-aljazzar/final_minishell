@@ -4,7 +4,7 @@
 // • Handle absolute/relative paths
 // • Reject execution of directories
 // • Print clear error messages for invalid commands
-void execute_external_command(t_minishell *shell)
+void	execute_external_command(t_minishell *shell)
 {
     t_command *cmd = shell->cmd;
     char *cmd_path;

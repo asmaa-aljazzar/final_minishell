@@ -1,12 +1,12 @@
 #include "minishell.h"
 
-int	increase_SHLVL_var(t_minishell *ms, t_env *env) //todo norm name error
+int	increase_shlvl_var(t_minishell *ms, t_env *env)
 {
 	char	*new;
 	char	*old; // old value of SHLVL
 	int		lvl;   // This will be the level of the shell
 
-	old = get_env_value(env, "SHLVL", NULL); // get the old value of SHLVL // todo
+	old = get_env_value(env, "SHLVL", NULL); // get the old value of SHLVL 
 
 	if (is_positive_number(old))       // If the value is positive
 		lvl = ft_atoi(old) + 1;

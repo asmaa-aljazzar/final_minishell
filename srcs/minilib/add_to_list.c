@@ -1,7 +1,5 @@
 #include "minishell.h"
 
-// [ free(old_list) ] Only pointer, not the strings inside
-
 char **add_to_list(char **old_list, char *value)
 {
 	int len;

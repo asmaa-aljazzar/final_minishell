@@ -28,7 +28,6 @@ EXPAND_DIR				=	$(PROG_DIR)expand/
 LEXER_AND_TOKENIZER_DIR =	$(PROG_DIR)lexer_and_tokenizer/
 SIGNALS_DIR				=	$(PROG_DIR)signals/
 ERRORS_DIR 				= 	$(PROG_DIR)errors/
-DEBUG_DIR				=	$(PROG_DIR)debug/
 EXECUTION_DIR			=	$(PROG_DIR)execution/
 PIPE_DIR				= 	$(EXECUTION_DIR)pipe/
 PATH_DIR				= 	$(EXECUTION_DIR)path/
@@ -202,11 +201,6 @@ SIGNALS_SRC 	=	$(SIGNALS_DIR)setup_signals_child.c\
 					$(SIGNALS_DIR)setup_signals_readline.c\
 					$(SIGNALS_DIR)sigint_handler.c\
 
-DEBUG_SRC = $(DEBUG_DIR)debug_print_envp_array.c\
-			$(DEBUG_DIR)debug_print_env_list.c\
-			$(DEBUG_DIR)debug_print_tokens.c\
-			$(DEBUG_DIR)debug_command.c\
-
 
 
 # PARS_DIR	= 	$(PARS)parse_and_execute.c
@@ -220,7 +214,6 @@ PROG_SRC	=	$(INIT_SRC)\
  				$(LEXER_AND_TOKENIZER_SRC)\
  				$(ERRORS_SRC)\
 				$(SIGNALS_SRC)\
-				$(DEBUG_SRC)\
 
 SRCS	=	$(MAIN_SRC)\
 			$(MINILIB_SRC)\

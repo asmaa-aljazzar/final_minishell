@@ -1,6 +1,6 @@
 #include "minishell.h"
-
-int	create_new_env_var(t_minishell *shell, char *name, char *value)//todo Function has more than 25 lines
+//todo Function has more than 25 lines
+int	create_new_env_var(t_minishell *shell, char *name, char *value)
 {
 	t_env	*current;
 	t_env	*new_var;
@@ -35,3 +35,4 @@ int	create_new_env_var(t_minishell *shell, char *name, char *value)//todo Functi
 		return (0);
 	return (1);
 }
+

@@ -29,7 +29,7 @@ void	init(t_minishell *ms, char **environ, char *argv)
 	ms->in_single_quote = 0;                
 	ms->in_double_quote = 0;          
 	ft_memset(ms->buff, 0, sizeof(ms->buff));
-	if (!increase_SHLVL_var(ms, ms->env))
+	if (!increase_shlvl_var(ms, ms->env))
 	{
 		free(ms->mini_file);
 		free_2d(ms->envp);
