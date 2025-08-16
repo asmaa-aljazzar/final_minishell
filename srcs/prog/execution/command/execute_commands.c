@@ -4,7 +4,6 @@ void execute_commands(t_minishell *ms)
 {
     if(g_signal_received != 2)
     {
-        // printf("here");
         if (ms->pipe_count == 0)
             execute_single_command(ms);
         else

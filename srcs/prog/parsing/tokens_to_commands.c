@@ -47,16 +47,10 @@ int add_redirection(t_minishell *minishell, t_redirection **root, t_token *token
 			current = current->next;
 		current->next = new_redir;
 		new_redir->prev = current;
-		// if (new_redir->prev->heredoc_fd != -1)
-		// {
-		// 	close(new_redir->prev->heredoc_fd);
-		// 	new_redir->prev->heredoc_fd = -1; // Reset fd after closing
-		// }
 	}
 	if (new_redir->type == T_HEREDOC)
 	{
 		new_redir->heredoc_fd = process_heredoc(minishell, file);
-		// fprintf(stderr, "---->%d \n", new_redir->heredoc_fd);
 	}
 	return (1);
 }
@@ -107,7 +101,6 @@ void	tokens_to_commands(t_minishell *minishell)
 			cmd->argv[argc++] = tokens[i]->word;
 		i++;
 	}
-	// print_re(cmd);
 	if (cmd && cmd->argv)
 		cmd->argv[argc] = NULL;
 }

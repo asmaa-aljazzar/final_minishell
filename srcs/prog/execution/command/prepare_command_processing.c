@@ -12,8 +12,7 @@ int prepare_command_processing(t_minishell *ms)
 	argv_for_commands(ms);
 	if (fill_argvs(ms) < 0)
 	{
-		//free cmd
-		//free tokens
+		free_simple_resources(ms);
 		return (-1);
 	}
 	tokens_to_commands(ms);

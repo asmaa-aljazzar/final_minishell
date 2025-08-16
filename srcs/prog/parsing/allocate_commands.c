@@ -1,13 +1,16 @@
 
 #include "minishell.h"
-//static 
+
 t_command *create_command_list(t_minishell *ms, int count)
 {
-    t_command *head = NULL;
-    t_command *curr = NULL;
+    t_command *head;
+    t_command *curr;
     t_command *new;
-    int i = 0;
+    int i;
 
+    head = NULL;
+    curr = NULL;
+    i = 0;
     while (i <= count)
     {
         new = init_command(ms);

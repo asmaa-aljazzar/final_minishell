@@ -14,7 +14,6 @@ void	argv_for_commands(t_minishell *minishell)
 		allocate_argv(minishell, &argc, &cmd, &i);
 		i++;
 	}
-	// Allocate argv and argv_expanded for the last command, if any
 	if (cmd)
 	{
 		cmd->argv = malloc(sizeof(char *) * (argc + 1));

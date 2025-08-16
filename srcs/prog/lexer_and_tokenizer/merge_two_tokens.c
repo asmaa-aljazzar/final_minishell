@@ -3,7 +3,9 @@
 
 void	merge_two_tokens(t_minishell *minishell, t_token *dst, t_token *src)
 {
-	char *joined_word = ft_strjoin(dst->word, src->word);
+	char *joined_word;
+	
+	joined_word = ft_strjoin(dst->word, src->word);
 	if (!joined_word)
 		ft_exit(minishell, "malloc failed", 1);
 	free(dst->word);

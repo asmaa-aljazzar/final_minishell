@@ -1,0 +1,18 @@
+colors.txt
+et --hard HEAD@{4}
+FETCH_HEAD
+include
+leaks.sh
+libft
+makefile
+minishell
+o
+objs
+out
+out2
+output.txt
+out.txt
+readline.supp
+srcs
+valgrind.log
+z_not_working.txt

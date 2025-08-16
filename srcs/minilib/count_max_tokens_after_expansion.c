@@ -2,19 +2,21 @@
 
 int count_max_tokens_after_expansion(t_minishell *ms)
 {
-    int i = 0;
-    int max = 0;
-
+    int i;
+    int max;
+    
+    max = 0;
+    i = 0;
     while (ms->tok && ms->tok[i])
     {
         if (ms->tok[i]->qtype == QUOTE_SINGLE)
-            max += 1; // No expansion
+            max += 1;
         else
-            max += 20; // Conservative estimate for potential splits
+            max += 20;
         i++;
     }
     if (max > 0)
         return max;
     else
-        return 100; // Minimum allocation
+        return (100);
 }

@@ -28,11 +28,10 @@ void	free_commands(t_minishell *minishell)
 		next = current->next;
 		if (current->argv)
 			free(current->argv);
-		// if (current->redir)
-		// {
-		// 	free_redirections(current->redir);
-		// 	current->redir = NULL; // Avoid double free
-		// }
+		if (current->argv_expanded)
+			free(current->argv_expanded);
+		if (current->redir)
+			free(current->redir);
 		free(current);
 		current = next;
 	}

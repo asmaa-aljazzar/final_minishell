@@ -8,7 +8,6 @@ void	allocate_argv(t_minishell *minishell, int *argc, t_command **cmd,
 	token = minishell->tok[*i];
 	if (token->type == PIPE)
 	{
-		// Allocate argv and argv_expanded arrays for the current command
 		(*cmd)->argv = malloc(sizeof(char *) * ((*argc) + 1));
 		(*cmd)->argv_expanded = malloc(sizeof(int) * ((*argc) + 1));
 		if (!(*cmd)->argv || !(*cmd)->argv_expanded)

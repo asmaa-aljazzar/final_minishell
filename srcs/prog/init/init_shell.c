@@ -56,8 +56,6 @@ static int process_input_and_validate(t_minishell *ms)
 
 int init_shell(t_minishell *ms)
 {
-	// if(ms->cmd->argv)
-	// 	free_2d(ms->cmd->argv);
 	check_to_free(ms);
 	if (!read_and_prepare_input(ms))
 		return (1);

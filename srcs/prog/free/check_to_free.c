@@ -18,4 +18,9 @@ void	check_to_free(t_minishell *minishell)
 		free(minishell->input);
 		minishell->input = NULL;
 	}
+	if (minishell->mini_file)
+	{
+		free(minishell->mini_file);
+		minishell->mini_file = NULL;
+	}
 }

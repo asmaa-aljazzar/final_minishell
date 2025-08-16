@@ -11,7 +11,7 @@ void	merge_words(t_minishell *minishell)
 	k = 0;
 	if (!minishell || !minishell->tok)
 		return ;
-	orig = minishell->tok; // origin token
+	orig = minishell->tok;
 	while (orig[i])
 	{
 		minishell->tok[k] = orig[i];

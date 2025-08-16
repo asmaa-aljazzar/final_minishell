@@ -100,26 +100,26 @@ static int save_and_apply_redirection(t_minishell *ms, int *saved_stdout)
         {
             perror("dup");
             ms->exit_code = 1;
-            return -1;
+            return (-1);
         }
         if (main_redirection(ms) != 0)
         {
             if (*saved_stdout >= 0)
                 close(*saved_stdout);
             ms->exit_code = 1;
-            return -1;
+            return (-1);
         }
     }
-    return 0;
+    return (0);
 }
 
 static void execute_builtin_and_restore(t_minishell *ms, int saved_stdout)
 {
-    compare_commands(ms); // Execute builtin
-
+    compare_commands(ms); 
     if (saved_stdout >= 0)
     {
-        dup2(saved_stdout, STDOUT_FILENO);
+        if (dup2(saved_stdout, STDOUT_FILENO) == -1)
+            ft_exit(ms, "dup2 stdout failed", 1);
         close(saved_stdout);
     }
 }
@@ -129,35 +129,37 @@ static int handle_builtin_with_redirection(t_minishell *ms)
     int saved_stdout;
 
     if (save_and_apply_redirection(ms, &saved_stdout) != 0)
-        return -1;
-
+    {
+        free_simple_resources(ms);
+        return (-1);
+    }
     execute_builtin_and_restore(ms, saved_stdout);
-
-    return 0;
+    return (0);
 }
 
 static void fork_and_execute_external(t_minishell *ms)
 {
-    pid_t pid = fork();
+    pid_t pid;
     int status;
+    
+    pid = fork();
     if (pid < 0)
     {
         perror("fork");
         ms->exit_code = 1;
-        return;
+        ft_exit(ms, "fork failed", 1);
     }
     else if (pid == 0)
     {
         setup_signals_child();
-
         if (main_redirection(ms) != 0)
-            exit(EXIT_FAILURE);
+            ft_exit(ms, "main_redirection failed", 1);
         execute_external_command(ms);
-        exit(EXIT_FAILURE);
+        ft_exit(ms, "execute_external_command failed", 1);
     }
     else
     {
-        waitpid(pid, &status, 0);
+        waitpid(-1, &status, 0);
         if (WIFEXITED(status))
             ms->exit_code = WEXITSTATUS(status);
         else if (WIFSIGNALED(status))
@@ -172,32 +174,32 @@ static int validate_command_for_execution(t_minishell *ms)
     if (!cmd || !cmd->argv)
     {
         ms->exit_code = 0;
-        return 0;
+        free_simple_resources(ms);
+        return (0);
     }
     if (is_command_empty(cmd))
     {
         ms->exit_code = 0;
-        return 0;
+        free_simple_resources(ms);
+        return (0);
     }
-    return 1;
+    return (1);
 }
 
 static void handle_builtin_command(t_minishell *ms)
 {
     if (handle_builtin_with_redirection(ms) != 0)
-        return;
+        return ;
 }
 
 void execute_single_command(t_minishell *ms)
 {
     if (!validate_command_for_execution(ms))
-        return;
-
+        return ;
     if (ms->cmd && is_builtin(ms->cmd))
     {
         handle_builtin_command(ms);
         return;
     }
-
     fork_and_execute_external(ms);
 }

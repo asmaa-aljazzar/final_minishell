@@ -42,41 +42,38 @@ static void wait_for_children(t_minishell *ms, pid_t *pids, int cmd_count)
 // --- Child process: set up pipes, redirection, execute command ---
 static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, int cmd_count)
 {
-        setup_signals_child();
+    setup_signals_child();
     // Redirect stdin to previous pipe read end if not first command
     if (idx > 0 && dup2(pipes[idx - 1][0], STDIN_FILENO) < 0)
     {
         perror("dup2 stdin");
-        exit(EXIT_FAILURE);
+        close_all_pipes(pipes, cmd_count - 1);
+        ft_exit(ms, "dup2 stdin failed", 1);
     }
-
     // Redirect stdout to next pipe write end if not last command
     if (idx < cmd_count - 1 && dup2(pipes[idx][1], STDOUT_FILENO) < 0)
     {
         perror("dup2 stdout");
-        exit(EXIT_FAILURE);
+        close_all_pipes(pipes, cmd_count - 1);
+        ft_exit(ms, "dup2 stdout failed", 1);
     }
-
     close_all_pipes(pipes, cmd_count - 1);
-
     ms->cmd = cmd;
     if (main_redirection(ms) != 0)
-        exit(EXIT_FAILURE);
+        ft_exit(ms, "main_redirection failed", 1);
 
     if (is_command_empty(cmd))
-        exit(0);
-
-
+        ft_exit(ms, "Command is empty", 0);
     if (is_builtin(cmd))
     {
         compare_commands(ms);
-        exit(ms->exit_code);
+        ft_exit(ms, "Built-in command executed", ms->exit_code);
     }
     else
     {
         execute_external_command(ms);
         // execve should not return if successful
-        exit(EXIT_FAILURE);
+        ft_exit(ms, "execve failed", 1);
     }
 }
 
@@ -131,9 +128,9 @@ static int allocate_resources(int cmd_count, int (**pipes)[2], pid_t **pids)
         perror("malloc");
         free(*pipes);
         free(*pids);
-        return -1;
+        return (-1);
     }
-    return 0;
+    return (0);
 }
 
 // --- Cleanup on fork failure ---
@@ -152,40 +149,35 @@ static void cleanup_on_fork_failure(t_minishell *ms, pid_t *pids, int forked, in
 static int setup_and_fork(t_minishell *ms, int cmd_count, int (**pipes)[2], pid_t **pids)
 {
     if (allocate_resources(cmd_count, pipes, pids) < 0)
-        return -1;
+        return (-1);
     if (create_all_pipes(*pipes, cmd_count - 1) < 0)
     {
         free(*pipes);
         free(*pids);
-        return -1;
+        return (-1);
     }
-
     int forked = fork_children(ms, *pipes, *pids, cmd_count);
     if (forked < cmd_count)
     {
         cleanup_on_fork_failure(ms, *pids, forked, *pipes, cmd_count - 1);
-        return -1;
+        return (-1);
     }
-    return 0;
+    return (0);
 }
 
 // --- Main function to execute piped commands ---
 void execute_piped_commands(t_minishell *ms, int cmd_count)
 {
-    if (cmd_count < 2) // no pipe, nothing to do here
+    if (cmd_count < 2)
         return;
-
     int (*pipes)[2] = NULL;
     pid_t *pids = NULL;
-
     if (setup_and_fork(ms, cmd_count, &pipes, &pids) < 0)
     {
         ms->exit_code = EXIT_FAILURE;
-        return;
+        ft_exit(ms, "Failed to set up pipes or fork children", EXIT_FAILURE);
     }
-
     handle_parent_process(ms, pipes, pids, cmd_count);
-
     free(pipes);
     free(pids);
 }

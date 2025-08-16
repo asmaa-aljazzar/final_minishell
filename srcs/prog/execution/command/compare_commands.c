@@ -9,8 +9,6 @@ void compare_commands(t_minishell *shell)
         shell->exit_code = 0;
         return;
     }
-
-    // Use exact string comparison to avoid partial matches
     if (ft_strcmp(cmd->argv[0], "echo") == 0)
         echo_builtin(shell);
     else if (ft_strcmp(cmd->argv[0], "cd") == 0)

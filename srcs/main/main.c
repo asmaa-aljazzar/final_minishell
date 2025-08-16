@@ -6,7 +6,7 @@ int main(int ac, char **av, char **environ)
 	(void) ac;
 	setup_signals_parent();
 	init (&ms, environ, av[0]);
-	main_loop (&ms); // go to the main loop // todo
-	rl_clear_history (); // clear history before exit the shell
+	main_loop (&ms);
+	rl_clear_history ();
 	return (0);
 }

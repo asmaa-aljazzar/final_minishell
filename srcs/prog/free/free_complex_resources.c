@@ -5,22 +5,52 @@ void	free_complex_resources(t_minishell *shell)
 {
 	if (shell->cmd)
 	{
-		free_commands(shell); // commands linked list
+		free_commands(shell);
 		shell->cmd = NULL;
 	}
 	if (shell->tok)
 	{
-		free_tokens(shell->tok); // tokens array
+		free_tokens(shell->tok);
 		shell->tok = NULL;
 	}
 	if (shell->env)
 	{
-		free_env(shell->env); // env linked list
+		free_env(shell->env);
 		shell->env = NULL;
 	}
 	if (shell->envp)
 	{
-		free_2d(shell->envp); // envp array
+		free_2d(shell->envp);
 		shell->envp = NULL;
+	}
+	if (shell->mini_file)
+	{
+		free(shell->mini_file);
+		shell->mini_file = NULL;
+	}
+	if (shell->input)
+	{
+		free(shell->input);
+		shell->input = NULL;	
+	}
+}
+
+
+void free_simple_resources(t_minishell *shell)
+{
+	if (shell->cmd)
+	{
+		free_commands(shell);
+		shell->cmd = NULL;
+	}
+	if (shell->tok)
+	{
+		free_tokens(shell->tok);
+		shell->tok = NULL;
+	}
+	if (shell->input)
+	{
+		free(shell->input);
+		shell->input = NULL;	
 	}
 }
