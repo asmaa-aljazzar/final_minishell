@@ -1,15 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   extract_word.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: baal-moh <baal-moh@student.42amman.com>    #+#  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025-08-16 11:17:10 by baal-moh          #+#    #+#             */
+/*   Updated: 2025-08-16 11:17:10 by baal-moh         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-char *extract_word(char *str, int *index)//todo: ask mohammad
+char	*extract_word(char *str, int *index) // todo: ask mohammad
 {
-    int i = *index;
-    while (str[i] && is_whitespace(str[i]))
-        i++;
-    if (!str[i])
-        return NULL;
-    int start = i;
-    while (str[i] && !is_whitespace(str[i]))
-        i++;
-    *index = i;
-    return (ft_substr(str, start, i - start));
+	int	i;
+	int	start;
+
+	i = *index;
+	while (str[i] && is_whitespace(str[i]))
+		i++;
+	if (!str[i])
+		return (NULL);
+	start = i;
+	while (str[i] && !is_whitespace(str[i]))
+		i++;
+	*index = i;
+	return (ft_substr(str, start, i - start));
 }
