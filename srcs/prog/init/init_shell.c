@@ -12,6 +12,9 @@ static void initialize_fields(t_minishell *ms)
 
 static int read_input_and_process(t_minishell *ms)
 {
+	int	i;
+
+	i = 0;
 	ms->input = readline(PROMPT);
 	if (!ms->input)
 	{
@@ -24,7 +27,15 @@ static int read_input_and_process(t_minishell *ms)
 		ms->input = NULL;
 		return (0);
 	}
+	while (ms->input[i])
+	{
+		if (!is_whitespace(ms->input[i]))
+			break;
+		i++;
+	}
 	add_history(ms->input);
+	if (!ms->input[i])
+		return (0);
 	if (g_signal_received == SIGINT)
 		ms->exit_code = 130;
 	g_signal_received = SIG_NONE;

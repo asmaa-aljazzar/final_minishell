@@ -25,7 +25,7 @@ char *env_builtin_resolve_path(t_minishell *minishell, t_command *cmd)
         temp_cmd.argv = &cmd->argv[1];
         t_command *original_cmd = minishell->cmd;
         minishell->cmd = &temp_cmd;
-        path = get_path(minishell);
+        path = get_path(minishell, cmd->argv);
         minishell->cmd = original_cmd;
         if (!path)
         {

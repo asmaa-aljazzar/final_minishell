@@ -155,11 +155,13 @@ static void fork_and_execute_external(t_minishell *ms)
         setup_signals_child();
         if (main_redirection(ms) != 0)
             ft_exit(ms, "main_redirection failed", 1);
-        execute_external_command(ms);
+        execute_external_command(ms, ms->cmd->argv);
         ft_exit(ms, "execute_external_command failed", 1);
     }
     else
     {
+		signal(SIGINT, handle_c);
+		signal(SIGQUIT, handlequit);
         waitpid(-1, &status, 0);
         if (WIFEXITED(status))
             ms->exit_code = WEXITSTATUS(status);

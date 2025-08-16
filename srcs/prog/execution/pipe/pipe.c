@@ -42,15 +42,14 @@ static void wait_for_children(t_minishell *ms, pid_t *pids, int cmd_count)
 // --- Child process: set up pipes, redirection, execute command ---
 static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, int cmd_count)
 {
+	char **argv;
     setup_signals_child();
-    // Redirect stdin to previous pipe read end if not first command
     if (idx > 0 && dup2(pipes[idx - 1][0], STDIN_FILENO) < 0)
     {
         perror("dup2 stdin");
         close_all_pipes(pipes, cmd_count - 1);
         ft_exit(ms, "dup2 stdin failed", 1);
     }
-    // Redirect stdout to next pipe write end if not last command
     if (idx < cmd_count - 1 && dup2(pipes[idx][1], STDOUT_FILENO) < 0)
     {
         perror("dup2 stdout");
@@ -58,7 +57,6 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
         ft_exit(ms, "dup2 stdout failed", 1);
     }
     close_all_pipes(pipes, cmd_count - 1);
-    ms->cmd = cmd;
     if (main_redirection(ms) != 0)
         ft_exit(ms, "main_redirection failed", 1);
     if (is_command_empty(cmd))
@@ -70,8 +68,11 @@ static void run_child(t_minishell *ms, t_command *cmd, int pipes[][2], int idx, 
     }
     else
     {
-        execute_external_command(ms);
-        // execve should not return if successful
+		argv = cmd->argv;
+		cmd->argv = NULL;
+		if (ms->cmd)
+			free_commands(ms);
+        execute_external_command(ms, argv);
         ft_exit(ms, "execve failed", 1);
     }
 }
@@ -100,7 +101,7 @@ static int fork_children(t_minishell *ms, int pipes[][2], pid_t *pids, int cmd_c
 {
     t_command *cmd = ms->cmd;
 
-    for (int i = 0; i < cmd_count && cmd; i++, cmd = cmd->next) // todo
+    for (int i = 0; i < cmd_count && cmd; i++, cmd = cmd->next)
     {
         pids[i] = fork();
         if (pids[i] < 0)
